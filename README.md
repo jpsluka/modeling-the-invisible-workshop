@@ -1,3 +1,4 @@
+![Workshop Banner](media/Screenshot 2026-05-12 at 13-03-02 ModelingTheInvisibleWorkshop.png)
 # Modeling the Invisible Workshop Repository
 
 This repository is a GitHub-ready starter kit for the **Modeling the Invisible** workshop competition. It is organized around the workshop workflow: organizers release data in stages, participants post forecasts, and the organizing team summarizes and scores submissions.
