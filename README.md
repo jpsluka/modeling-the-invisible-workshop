@@ -20,9 +20,6 @@ The workshop uses three influenza challenge rounds and expects small teams to mo
 test auto directory figure
 <!-- readme-tree start -->
 <!-- readme-tree end -->
-dir-tree.yml
-<!-- dir-tree start -->
-<!-- dir-tree end -->
 
 ```text
 .
