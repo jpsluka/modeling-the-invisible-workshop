@@ -1,4 +1,8 @@
 ![Workshop Banner](media/Banner_ModelingTheInvisibleWorkshop.png)
+
+<img src="media/Banner_ModelingTheInvisibleWorkshop.png" alt="Workshop Banner" width="200">
+
+
 # Modeling the Invisible Workshop Repository
 
 This repository is a GitHub-ready starter kit for the **Modeling the Invisible** workshop competition. It is organized around the workshop workflow: organizers release data in stages, participants post forecasts, and the organizing team summarizes and scores submissions.
