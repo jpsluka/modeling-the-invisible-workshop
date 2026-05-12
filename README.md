@@ -16,6 +16,11 @@ The workshop uses three influenza challenge rounds and expects small teams to mo
 4. Leaderboards are updated in `scoring/`
 
 ## Repository layout
+``` text
+test auto directory figure
+<!-- readme-tree start -->
+<!-- readme-tree end -->
+```
 
 ```text
 .
