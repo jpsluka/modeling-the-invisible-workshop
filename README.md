@@ -1,7 +1,4 @@
-![Workshop Banner](media/Banner_ModelingTheInvisibleWorkshop.png)
-
 <img src="media/Banner_ModelingTheInvisibleWorkshop.png" alt="Workshop Banner" width="600">
-
 
 # Modeling the Invisible Workshop Repository
 
