@@ -24,35 +24,28 @@ The workshop uses three influenza challenge rounds and expects small teams to mo
 ```text
 .
 |   README.md
-|
 +---.github
 |   \---workflows
 |           dir_tree.yml
 |           score.yml
-|
 +---data-release
 |       README.md
-|
 +---docs
 |       prediction_csv_specification_workshop_repo.md
 |       Scoring-rules.md
-|
 +---media
 |       Banner_ModelingTheInvisibleWorkshop.png
 |       README.md
-|
 +---predictions
 |   |   README.md
 |   |
 |   \---templates
 |           forecast_template.csv
-|
 \---scoring
     |   leaderboard.csv
     |   README.md
     |   reference_answers.example.csv
     |   score_log.csv
-    |
     \---scripts
             README.md
             score_predictions.py
