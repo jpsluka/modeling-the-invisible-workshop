@@ -1,4 +1,3 @@
-````markdown
 # Scoring Rules
 
 This document defines the official scoring methodology for the *Modeling the Invisible* workshop forecasting challenge.
