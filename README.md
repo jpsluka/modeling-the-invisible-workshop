@@ -8,7 +8,7 @@ This repository is a GitHub-ready starter kit for the **Modeling the Invisible**
 
 The workshop uses three influenza challenge rounds and expects small teams to model from limited, sequentially released data. Participants may use any modeling approach, and judging focuses on season totals, RMSE, early prediction of the final state, and parameter estimation.
 
-## Workshop Workflow
+## Workshop Workflow 
 
 1. Organizers release data in `data-release/`
 2. Teams submit predictions in `predictions/`
