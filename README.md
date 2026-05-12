@@ -6,6 +6,13 @@ This repository is a GitHub-ready starter kit for the **Modeling the Invisible**
 
 The workshop uses three influenza challenge rounds and expects small teams to model from limited, sequentially released data. Participants may use any modeling approach, and judging focuses on season totals, RMSE, early prediction of the final state, and parameter estimation.
 
+## Workshop Workflow
+
+1. Organizers release data in `data-release/`
+2. Teams submit predictions in `predictions/`
+3. GitHub Actions automatically validates and scores submissions
+4. Leaderboards are updated in `scoring/`
+
 ## Repository layout
 
 ```text
@@ -79,6 +86,12 @@ The included scoring script is intentionally simple and transparent. It calculat
 - **Parameter estimation score** from the model parameters included in the submission
 
 A combined score is then written to `scoring/leaderboard.csv`.
+
+## Competition Rules
+
+- [Prediction Format](docs/prediction-format.md)
+- [Scoring Rules](docs/scoring-rules.md)
+- [Challenge Timeline](docs/challenge-timeline.md)
 
 ## GitHub Actions
 
