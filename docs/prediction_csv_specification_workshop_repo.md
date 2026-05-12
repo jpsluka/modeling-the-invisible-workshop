@@ -33,7 +33,7 @@ Each CSV must:
 - Use commas as separators
 - Contain no blank rows
 - Use ISO dates (`YYYY-MM-DD`)
-- Contain exactly one prediction per region per target week
+- Contain exactly one prediction per target week
 
 ---
 
@@ -45,7 +45,7 @@ Each CSV must:
 | challenge_round | integer | Challenge number (1, 2, or 3) |
 | prediction_date | date | Date predictions were generated |
 | target_week | date | Forecast target week ending date |
-| region | string | Geographic region identifier |
+| forecast_target | string | Forecast target identifier (use `overall`) |
 | predicted_cases | float | Predicted influenza case count |
 | lower_95_ci | float | Lower 95% confidence interval |
 | upper_95_ci | float | Upper 95% confidence interval |
@@ -56,28 +56,20 @@ Each CSV must:
 
 ---
 
-# Region Codes
+# Forecast Targets
 
-The following region identifiers are allowed:
+All forecasts are made at the overall population level for the released dataset.
 
-| Region | Description |
-|---|---|
-| national | Entire dataset |
-| region-1 | Regional subset 1 |
-| region-2 | Regional subset 2 |
-| region-3 | Regional subset 3 |
-| region-4 | Regional subset 4 |
-
-Workshop organizers may expand or redefine these regions depending on the released dataset.
+Each row in a submission represents one prediction for one target week.
 
 ---
 
 # Example Submission
 
 ```csv
-team_name,challenge_round,prediction_date,target_week,region,predicted_cases,lower_95_ci,upper_95_ci,estimated_peak_week,estimated_total_cases,model_name,model_parameters
-team-alpha,1,2026-02-10,2026-02-14,national,1042,980,1110,2026-03-07,18200,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,2026-02-10,2026-02-21,national,1180,1090,1260,2026-03-07,18200,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
+team_name,challenge_round,prediction_date,target_week,forecast_target,predicted_cases,lower_95_ci,upper_95_ci,estimated_peak_week,estimated_total_cases,model_name,model_parameters
+team-alpha,1,2026-02-10,2026-02-14,overall,1042,980,1110,2026-03-07,18200,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
+team-alpha,1,2026-02-10,2026-02-21,overall,1180,1090,1260,2026-03-07,18200,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
 ```
 
 ---
@@ -92,7 +84,7 @@ Submissions will automatically fail validation if:
 - Confidence intervals are invalid:
   - `lower_95_ci > predicted_cases`
   - `upper_95_ci < predicted_cases`
-- Duplicate `(region, target_week)` rows exist
+- Duplicate `target_week` rows exist
 - File names do not match required conventions
 
 ---
