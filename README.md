@@ -105,9 +105,49 @@ A combined score is then written to `scoring/leaderboard.csv`.
 
 ## Competition Rules
 
-- [Prediction Format](docs/prediction-format.md)
+All participants should review the official workshop documentation before submitting forecasts.
+
+### Documentation
+
+- [Prediction Submission Format](docs/prediction-format.md)
 - [Scoring Rules](docs/scoring-rules.md)
-- [Challenge Timeline](docs/challenge-timeline.md)
+
+### Repository Workflow
+
+1. Organizers release outbreak data in `data-release/`
+2. Teams submit forecasts in `predictions/`
+3. GitHub Actions automatically validates submissions
+4. Scores and leaderboards are automatically regenerated in `scoring/`
+
+### Submission Format
+
+Prediction files must be submitted as:
+
+```text
+predictions/<team-name>/round-<n>.csv
+```
+
+Example:
+
+```text
+predictions/team-alpha/round-1.csv
+```
+
+### Automated Scoring
+
+All validation and scoring are fully automated through GitHub Actions.
+
+Updated leaderboards are written to:
+
+```text
+scoring/leaderboard.csv
+```
+
+Detailed round-level scoring summaries are written to:
+
+```text
+scoring/results/
+```
 
 ## GitHub Actions
 
