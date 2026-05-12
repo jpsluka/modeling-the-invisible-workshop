@@ -17,6 +17,9 @@ The workshop uses three influenza challenge rounds and expects small teams to mo
 
 ## Repository layout
 
+<!-- readme-tree start -->
+<!-- readme-tree end -->
+
 ```text
 .
 ├── .github/
