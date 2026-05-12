@@ -1,4 +1,4 @@
-<img src="media/Banner_ModelingTheInvisibleWorkshop.png" alt="Workshop Banner" width="600">
+<img src="media/Banner_ModelingTheInvisibleWorkshop.png" alt="Workshop Banner" width="800">
 
 # Modeling the Invisible Workshop Repository
 
