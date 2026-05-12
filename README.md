@@ -20,25 +20,43 @@ The workshop uses three influenza challenge rounds and expects small teams to mo
 <!-- readme-tree start -->
 <!-- readme-tree end -->
 
+<!-- on Windows, in the local copy of the repo: "tree /f /a" creates the tree shown below -->
 ```text
 .
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   └── workflows/
-├── data-release/
-│   ├── challenge-1/
-│   ├── challenge-2/
-│   └── challenge-3/
-├── predictions/
-│   ├── templates/
-│   └── submissions/
-├── scoring/
-│   ├── reference_answers.example.csv
-│   ├── leaderboard.csv
-│   └── score_log.csv
-├── scripts/
-├── docs/
-└── README.md
+|   README.md
+|
++---.github
+|   \---workflows
+|           dir_tree.yml
+|           score.yml
+|
++---data-release
+|       README.md
+|
++---docs
+|       prediction_csv_specification_workshop_repo.md
+|       Scoring-rules.md
+|
++---media
+|       Banner_ModelingTheInvisibleWorkshop.png
+|       README.md
+|
++---predictions
+|   |   README.md
+|   |
+|   \---templates
+|           forecast_template.csv
+|
+\---scoring
+    |   leaderboard.csv
+    |   README.md
+    |   reference_answers.example.csv
+    |   score_log.csv
+    |
+    \---scripts
+            README.md
+            score_predictions.py
+            validate_predictions.py
 ```
 
 ## Typical workflow
