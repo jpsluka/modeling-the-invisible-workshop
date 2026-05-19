@@ -1,2 +1,0 @@
-team_name,challenge_id,release_id,target_date,predicted_severe_cases,predicted_total_cases,r0,vaccination_effectiveness,cross_protection_days,notes
-example_team,challenge-1,release_001,2026-06-03,1250,24000,1.35,0.42,18,example row
