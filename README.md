@@ -1,136 +1,89 @@
-<img src="media/Banner_ModelingTheInvisibleWorkshop.png" alt="Workshop Banner" width="800">
-
 # Modeling the Invisible Workshop Repository
 
-This repository is a GitHub-ready starter kit for the **Modeling the Invisible** workshop competition. It is organized around the workshop workflow: organizers release data in stages, participants post forecasts, and the organizing team summarizes and scores submissions.
+This repository is a GitHub-ready workshop starter for the **Modeling the Invisible** forecasting challenge.
 
-## Competition structure
+The competition has a single weekly outcome stream and one parameter target:
 
-The workshop uses three influenza challenge rounds and expects small teams to model from limited, sequentially released data. Participants may use any modeling approach, and judging focuses on season totals, RMSE, early prediction of the final state, and parameter estimation.
+- hospitalizations per 100,000 individuals
+- R0
 
-## Workshop Workflow 
+Forecast time is measured only in weeks. The season is 40 weeks long, week 1 is the first week of the season, and week 1 ends on October 7.
 
-1. Organizers release data in `data-release/`
-2. Teams submit predictions in `predictions/`
-3. GitHub Actions automatically validates and scores submissions
-4. Leaderboards are updated in `scoring/`
-
-## Typical workflow
-
-### 1) Organizers release data
-Place each release file under the matching challenge folder in `data-release/`.
-
-Example:
+## Repository layout
 
 ```text
-data-release/challenge-1/release_001.csv
-data-release/challenge-2/release_001.csv
-data-release/challenge-3/release_001.csv
+.
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   └── workflows/
+├── data-release/
+│   ├── challenge-1/
+│   ├── challenge-2/
+│   └── challenge-3/
+├── docs/
+│   ├── challenge-timeline.md
+│   ├── prediction-format.md
+│   └── scoring-rules.md
+├── predictions/
+│   ├── template/
+│   └── <team-name>/
+├── scoring/
+│   ├── reference_answers.csv
+│   ├── leaderboard.csv
+│   ├── score_log.csv
+│   ├── results/
+│   └── scripts/
+└── README.md
 ```
 
-### 2) Participants submit predictions
-Participants should copy the template from `predictions/templates/forecast_template.csv` and save their forecast files under `predictions/submissions/`.
+## How the workshop works
 
-Recommended naming convention:
+1. Organizers release weekly data in `data-release/`.
+2. Teams submit one CSV per round in `predictions/<team-name>/`.
+3. Each submission forecasts exactly four weeks into the future.
+4. GitHub Actions validates submissions, scores them against the reference answers, and regenerates the leaderboard automatically.
 
-```text
-predictions/submissions/<team_name>/<challenge_id>/<release_id>.csv
-```
+## Competition rules
 
-### 3) Organizers score and summarize results
-Use the scoring workflow and scripts in `scripts/` to validate submissions and generate the leaderboard files in `scoring/`.
+Review these files before submitting:
 
-## Submission format
+- [Prediction format](docs/prediction-format.md)
+- [Scoring rules](docs/scoring-rules.md)
+- [Challenge timeline](docs/challenge-timeline.md)
 
-The submission template includes these columns:
+## Submission files
 
-- `team_name`
-- `challenge_id`
-- `release_id`
-- `target_date`
-- `predicted_severe_cases`
-- `predicted_total_cases`
-- `r0`
-- `vaccination_effectiveness`
-- `cross_protection_days`
-- `notes`
-
-## Scoring model
-
-The included scoring script is intentionally simple and transparent. It calculates:
-
-- **Season total error** from cumulative severe-case forecasts
-- **RMSE** against the reference severe-case series
-- **Early final-state score** based on the first forecast row versus the final severe-case total
-- **Parameter estimation score** from the model parameters included in the submission
-
-A combined score is then written to `scoring/leaderboard.csv`.
-
-## Competition Rules
-
-All participants should review the official workshop documentation before submitting forecasts.
-
-### Documentation
-
-- [Prediction Submission Format](docs/prediction-format.md)
-- [Scoring Rules](docs/scoring-rules.md)
-
-### Repository Workflow
-
-1. Organizers release outbreak data in `data-release/`
-2. Teams submit forecasts in `predictions/`
-3. GitHub Actions automatically validates submissions
-4. Scores and leaderboards are automatically regenerated in `scoring/`
-
-### Submission Format
-
-Prediction files must be submitted as:
+Each team submits one file per round:
 
 ```text
 predictions/<team-name>/round-<n>.csv
 ```
 
-Example:
+Where `n` is 1, 2, or 3.
 
-```text
-predictions/team-alpha/round-1.csv
-```
+Each file must contain exactly four rows, covering the four weeks beyond the released data for that round.
 
-### Automated Scoring
+## Scoring outputs
 
-All validation and scoring are fully automated through GitHub Actions.
+Automated scoring writes these files:
 
-Updated leaderboards are written to:
+- `scoring/leaderboard.csv`
+- `scoring/score_log.csv`
+- `scoring/results/round-1-scores.csv`
+- `scoring/results/round-2-scores.csv`
+- `scoring/results/round-3-scores.csv`
 
-```text
-scoring/leaderboard.csv
-```
+## GitHub automation
 
-Detailed round-level scoring summaries are written to:
+The repository includes a GitHub Actions workflow that:
 
-```text
-scoring/results/
-```
-
-## GitHub Actions
-
-The repository includes a workflow that:
-
-1. validates forecast CSV files,
-2. optionally scores them against a reference answer key,
-3. writes leaderboard and log files as build artifacts.
-
-Use the manual workflow dispatch when you want to score a batch after releasing the official answer key.
-
-## Issue templates
-
-The `.github/ISSUE_TEMPLATE/` folder includes templates for:
-
-- submission or validation problems
-- scoring or leaderboard questions
+- validates prediction CSV files
+- scores each team against the reference answers
+- uploads scoring artifacts
+- commits refreshed leaderboard files on `main`
 
 ## Notes for organizers
 
-- Keep official release data separate from participant submissions.
-- Avoid committing hidden answer keys to the public branch.
-- When the competition ends, you can add a final reference file to `scoring/` and rerun the workflow to generate the official leaderboard.
+- Keep `scoring/reference_answers.csv` in sync with the challenge releases.
+- Update the challenge files in `data-release/` when a round is published.
+- Keep the scoring scripts and the prediction format in step with each other.
