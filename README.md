@@ -1,3 +1,5 @@
+![Uploading Screenshot 2026-05-12 at 13-03-02 ModelingTheInvisibleWorkshop.png…]()
+
 # Modeling the Invisible Workshop Repository
 
 This repository is a GitHub-ready workshop starter for the **Modeling the Invisible** forecasting challenge.
