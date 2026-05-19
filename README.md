@@ -1,4 +1,4 @@
-![Uploading Screenshot 2026-05-12 at 13-03-02 ModelingTheInvisibleWorkshop.png…]()
+<img width="1119" height="342" alt="Screenshot 2026-05-12 at 13-03-02 ModelingTheInvisibleWorkshop" src="https://github.com/user-attachments/assets/fdec441f-f696-4f3c-9a53-f5ae591ab228" />
 
 # Modeling the Invisible Workshop Repository
 
