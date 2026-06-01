@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Competition Rules</title>
+</head>
+<body>
+  <main>
+    <h1>Competition Rules</h1>
+    <h2>Overview</h2>
+    <p>The <strong>Modeling the Invisible</strong> workshop forecasting competition is a collaborative scientific exercise focused on predicting influenza-associated hospitalization dynamics.</p>
+    <h2>Team Structure</h2>
+    <ul>
+      <li>Teams may contain between 1 and 4 participants.</li>
+      <li>Participants may belong to only one team.</li>
+      <li>Teams may use any software, programming language, modeling framework, or analysis workflow.</li>
+    </ul>
+    <h2>Competition Structure</h2>
+    <p>For each round, organizers release updated hospitalization data and teams submit forecasts through the release horizon.</p>
+    <h2>Forecast Targets</h2>
+    <ul>
+      <li>weekly influenza-associated hospitalizations per 100,000 population</li>
+      <li>the effective reproduction number (<code>r0</code>)</li>
+    </ul>
+    <h2>Time System</h2>
+    <p>The competition uses a normalized 40-week influenza season with integer week numbers and no calendar dates in submission files.</p>
+    <h2>Submission Rules</h2>
+    <p>Each team submits one CSV file per round. Files must follow the repository format, contain the full predicted trajectory through the release horizon, and be committed before the deadline.</p>
+    <h2>Permitted Methods</h2>
+    <ul>
+      <li>mechanistic epidemic models</li>
+      <li>statistical forecasting models</li>
+      <li>machine learning methods</li>
+      <li>Bayesian approaches</li>
+      <li>agent-based simulations</li>
+      <li>hybrid or ensemble methods</li>
+      <li>manual parameter tuning</li>
+      <li>external public datasets</li>
+      <li>publicly available software libraries</li>
+    </ul>
+    <h2>Prohibited Activities</h2>
+    <p>The only explicitly forbidden activity is attempting to gain unauthorized access to the organizer's or another participant's computer systems.</p>
+    <h2>Scoring</h2>
+    <p>Forecasts are evaluated automatically using held-out ground truth data. Detailed scoring methodology is documented separately in <code>docs/scoring-rules.md</code>.</p>
+  </main>
+</body>
+</html>
