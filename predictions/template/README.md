@@ -1,5 +1,3 @@
 # Prediction Template
 
-Copy this file as a starting point for a new submission.
-
-The forecast horizon varies by round, so the template is only a schema example.
+Copy the CSV template into a team challenge/round folder and replace the example values with your forecast.

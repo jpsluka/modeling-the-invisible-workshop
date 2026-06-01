@@ -1,64 +1,77 @@
 # Scoring Rules
 
-This document defines the official scoring methodology for the workshop forecasting challenge.
+This document defines the scoring rules for the workshop forecasting competition.
 
-## Overview
+## Competition structure
 
-Scores are computed only on the forecast weeks defined by the current release metadata.
+- **Challenge 01** and **Challenge 02** are independent years.
+- Each challenge has **3 rounds**.
+- Rounds within a challenge are scored separately and then averaged into a challenge score.
+- Challenge scores are averaged into an overall workshop score.
 
-Each round score combines two metrics:
+## Score inputs
 
-- normalized RMSE for hospitalization forecasts
-- RMSE for `r0` forecasts
+Each submission file includes a full weekly trajectory from Week 1 through the forecast horizon specified by the round metadata.
 
-Lower scores are better.
+Scoring is applied only to the forecast weeks:
 
-## Round Score
+- from `forecast_start_week`
+- through `forecast_end_week`
 
-Let:
+Released weeks are included in the file for context and plotting, but they are not scored.
 
-- `H` be the predicted hospitalization-per-100k series for the forecast weeks
-- `H*` be the corresponding held-out truth series
-- `R` be the predicted `r0` series for the forecast weeks
-- `R*` be the corresponding held-out truth series
+## Metrics
 
-Then:
+### 1. Hospitalization trajectory error
 
-```math
-\mathrm{nRMSE}_H = rac{\sqrt{rac{1}{N}\sum_{i=1}^N (H_i - H_i^*)^2}}{ar{H}^*}
-```
-
-and
+The primary metric is normalized root mean squared error (nRMSE) on hospitalization forecasts.
 
 ```math
-\mathrm{RMSE}_{R_0} = \sqrt{rac{1}{N}\sum_{i=1}^N (R_i - R_i^*)^2}
+nRMSE = RMSE / mean(observed)
 ```
 
-The round score is the mean of these two values:
+where RMSE is computed over the forecast weeks only.
+
+### 2. R0 error
+
+R0 is scored with mean absolute percentage error (MAPE) over the forecast weeks.
 
 ```math
-\mathrm{RoundScore} = rac{\mathrm{nRMSE}_H + \mathrm{RMSE}_{R_0}}{2}
+MAPE = mean(|predicted - observed| / |observed|)
 ```
 
-## Overall Score
+If an observed R0 value is zero, the absolute error is used for that week.
 
-The overall leaderboard score is the mean of the completed round scores.
+### 3. Round score
 
-```math
-\mathrm{OverallScore} = rac{1}{K}\sum_{k=1}^K \mathrm{RoundScore}_k
-```
+The round score is the arithmetic mean of the hospitalization nRMSE and the R0 MAPE.
 
-where `K` is the number of scored rounds for the team.
+Lower is better.
 
-## Tie-Breaking
+### 4. Challenge score
 
-If two teams have identical overall scores, the leaderboard is ordered by:
+The challenge score is the arithmetic mean of the round scores within that challenge.
 
-1. lower hospitalization nRMSE
-2. lower `r0` RMSE
-3. team name alphabetically
+### 5. Overall score
 
-## Validation Boundary
+The overall workshop score is the arithmetic mean of the two challenge scores.
 
-Only the forecast weeks after `released_through_week` are scored.
-The public released weeks are checked only for consistency with the submitted file.
+## Leaderboards
+
+The repository produces:
+
+- `scoring/challenge-01/leaderboard.csv`
+- `scoring/challenge-02/leaderboard.csv`
+- `scoring/overall-leaderboard.csv`
+
+## Tie handling
+
+If two teams have identical overall scores, the tie is broken by:
+
+1. lower challenge 01 score
+2. lower challenge 02 score
+3. lower hospitalization nRMSE on the final scored round
+
+## Automation
+
+Validation and scoring are executed by GitHub Actions using the scripts in `scoring/scripts/`.

@@ -1,10 +1,10 @@
 ---
 name: Question
-about: Ask a question about the workshop, data format, or scoring.
-title: "[Question] "
-labels: question
+about: Ask a question about the workshop repository or workflow
 ---
 
 ## Question
 
-## Context
+## Relevant file paths
+
+## Additional details

@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
 .DS_Store
+.ipynb_checkpoints/
+notebooks/plots/*.png
+scoring/plots/*.png

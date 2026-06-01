@@ -1,101 +1,51 @@
 # Modeling the Invisible Workshop
 
-This repository supports the workshop competition **Modeling the Invisible: Competition on Forecasting Viral Spread with Limited Data**.
+This repository supports the workshop **Modeling the Invisible: Competition on Forecasting Viral Spread with Limited Data**.
 
-It includes:
+The competition is organized as:
 
-- the public release data for each round
-- the prediction submission format
-- scoring rules
-- validation and scoring scripts
-- a plotting notebook-style script
-- example submissions and synthetic truth data for testing
+- **2 independent challenges** (two different years)
+- **3 rounds per challenge**
+- **sequential data releases within each challenge**
+- **team submissions using numeric team IDs** (`Team-01`, `Team-02`, ...)
 
-## Repository Structure
+Each round releases updated hospitalization data for that challenge-year, and each team submits a full weekly forecast trajectory through the round-specific horizon.
 
-```text
-README.md
-CONTRIBUTING.md
+## Repository layout
 
-data-release/
-  round-1/
-  round-2/
-  round-3/
+- `data-release/` — release metadata and released data for each challenge and round
+- `predictions/` — team submissions, grouped by team and challenge
+- `scoring/` — hidden reference answers, leaderboard outputs, and scoring scripts
+- `docs/` — rules and file-format documentation
+- `.github/workflows/` — GitHub Actions workflow for validation and scoring
+- `notebooks/` — local plotting helpers for exploring team forecasts
 
-docs/
-  competition-rules.md
-  competition-rules.html
-  prediction-format.md
-  scoring-rules.md
+## Workflow
 
-notebooks/
-  plot_team_forecasts.py
+1. Organizers release a new round under `data-release/challenge-XX/round-YY/`.
+2. Teams update `predictions/Team-XX/challenge-XX/round-YY.csv`.
+3. GitHub Actions validates prediction files.
+4. GitHub Actions scores submissions against the hidden reference answers.
+5. Updated leaderboards are written to `scoring/`.
 
-predictions/
-  template/
-  team-alpha/
-  team-beta/
+## Competition rules and formats
 
-scoring/
-  leaderboard.csv
-  reference_answers.csv
-  results/
-  scripts/
+- [Competition Rules](docs/competition-rules.md)
+- [Prediction Format](docs/prediction-format.md)
+- [Scoring Rules](docs/scoring-rules.md)
 
-.github/
-  ISSUE_TEMPLATE/
-  workflows/
-```
+## Local plotting
 
-## Competition Summary
+The notebook-friendly plotting helper is in:
 
-Teams forecast weekly influenza-associated hospitalizations per 100,000 population and `r0`.
-Forecast horizons vary by round and are defined in `data-release/round-N/release_info.json`.
-Each submission contains the full trajectory from Week 1 through the release horizon.
+- `notebooks/plot_team_forecasts.py`
 
-## Data Files
+It creates per-team visual summaries and aggregate plots from the repository data.
 
-For each round:
-
-- `data-release/round-N/release_info.json` defines the released week and forecast horizon
-- `data-release/round-N/release.csv` contains the public hospitalization series through the released week
-
-## Submission Files
-
-Teams submit predictions to:
-
-```text
-predictions/<team-name>/round-N.csv
-```
-
-Each file must contain:
-
-- `week`
-- `hospitalizations_per_100k`
-- `r0`
-
-## Scoring
-
-Scores are computed only on the forecast weeks after the released data.
-The round score is the average of:
-
-- normalized RMSE for hospitalizations
-- RMSE for `r0`
-
-See `docs/scoring-rules.md` for the full definition.
-
-## Local Validation and Scoring
+## Quick start
 
 ```bash
 python scoring/scripts/validate_predictions.py --root .
 python scoring/scripts/score_predictions.py --root .
 ```
 
-## Notebook Plotting
-
-Run `notebooks/plot_team_forecasts.py` from the repository root to generate team plots and an aggregate plot for the latest round.
-
-## Notes
-
-The files in `predictions/team-alpha/`, `predictions/team-beta/`, and `scoring/reference_answers.csv` are synthetic examples included so the repository runs end-to-end out of the box.
-Organizers should replace them with their own release data and truth files when launching a real workshop instance.

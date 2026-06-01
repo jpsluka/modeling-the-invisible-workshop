@@ -4,83 +4,79 @@ This document defines the official submission format for the **Modeling the Invi
 
 ## Overview
 
-Each team submits one prediction file for each competition round.
+Each team submits one CSV file per challenge round.
 
-Prediction files contain the team's estimate of the hospitalization trajectory from Week 1 through the end of the forecast horizon for the current round, together with an estimate of `r0` for each week.
+Prediction files contain the team's full weekly forecast trajectory from Week 1 through the end of the forecast horizon defined by the current release metadata.
 
-The forecast horizon is specified by the current data release and may vary between rounds.
+The forecast horizon may vary by round. Typical horizons range from 3 to 6 weeks beyond the released data.
 
-Typical forecast horizons range from 3 to 6 weeks beyond the released data.
+## Competition time scale
 
-## Competition Time Scale
-
-The competition uses a normalized influenza season consisting of 40 weeks.
-
+- The competition uses a normalized 40-week influenza season.
 - Week numbers are integers.
 - Week 1 represents the start of the season.
-- No calendar dates are used.
-- All submissions use week numbers.
+- No calendar dates are used in submission files.
 
-## Data Release Information
+## Data release information
 
-Each competition round includes a release metadata file:
+Each round includes a release metadata file:
 
 ```text
-data-release/round-N/release_info.json
+data-release/challenge-XX/round-YY/release_info.json
 ```
 
 Example:
 
 ```json
 {
-  "round": 2,
+  "challenge_id": 1,
+  "round_id": 2,
   "released_through_week": 18,
   "forecast_start_week": 19,
   "forecast_end_week": 24
 }
 ```
 
-This file defines the required forecast horizon.
-
 Teams must submit predictions through `forecast_end_week`.
 
-## Submission Location
+## Submission location
 
 Prediction files must be submitted to:
 
 ```text
-predictions/<team-name>/round-N.csv
+predictions/Team-XX/challenge-YY/round-ZZ.csv
 ```
 
 Examples:
 
 ```text
-predictions/team-alpha/round-1.csv
-predictions/team-alpha/round-2.csv
-predictions/team-alpha/round-3.csv
+predictions/Team-01/challenge-01/round-01.csv
+predictions/Team-01/challenge-01/round-02.csv
+predictions/Team-01/challenge-02/round-01.csv
 ```
 
-## Required Columns
+## Required columns
 
 The prediction file must contain the following columns.
 
 | Column | Type | Description |
-|----------|----------|----------|
+|---|---:|---|
 | week | integer | Week number |
 | hospitalizations_per_100k | float | Predicted hospitalization rate per 100,000 population |
 | r0 | float | Predicted effective reproduction number |
 
-## Submission Requirements
+## Submission requirements
 
 The submission must:
 
 1. Begin with Week 1.
-2. Include all weeks through the forecast horizon specified in the release.
+2. Include all weeks through the forecast horizon specified in the release metadata.
 3. Contain exactly one row per week.
 4. Use ascending week order.
 5. Contain no missing week numbers.
+6. Include numeric values for both `hospitalizations_per_100k` and `r0`.
 
-For example, if:
+For example, if the matching release metadata says:
 
 ```json
 {
@@ -89,9 +85,13 @@ For example, if:
 }
 ```
 
-then the prediction file must contain weeks 1–16.
+then the prediction file must contain:
 
-## Example Submission
+```text
+weeks 1–16
+```
+
+## Example submission
 
 ```csv
 week,hospitalizations_per_100k,r0
@@ -113,7 +113,7 @@ week,hospitalizations_per_100k,r0
 16,4.45,0.96
 ```
 
-## Validation Rules
+## Validation rules
 
 Submissions automatically fail validation if:
 
@@ -123,8 +123,10 @@ Submissions automatically fail validation if:
 - required forecast weeks are missing
 - duplicate weeks exist
 - non-numeric values appear in numeric fields
+- the file does not begin at Week 1
+- the file does not extend through the required forecast end week
 
-## Forecast Horizon
+## Forecast horizon
 
 The forecast horizon is determined solely by the current release metadata.
 
@@ -132,38 +134,10 @@ Teams should not assume a fixed forecast length.
 
 Examples:
 
-| Released Through | Forecast Horizon |
-|------------------|-------------------|
+| Released through | Forecast horizon |
+|---|---|
 | Week 12 | Weeks 13–16 |
 | Week 18 | Weeks 19–24 |
-| Week 28 | Weeks 29–31 |
+| Week 24 | Weeks 25–30 |
 
 The required horizon may vary from round to round.
-
-## Ground Truth Data
-
-Released data are provided in:
-
-```text
-data-release/round-N/release.csv
-```
-
-with format:
-
-```csv
-week,hospitalizations_per_100k
-1,0.82
-2,0.95
-3,1.11
-```
-
-## Reproducibility
-
-Teams are encouraged to:
-
-- document assumptions
-- preserve code used to generate forecasts
-- maintain version control
-- describe uncertainty sources
-
-The repository serves as the official archive of all submissions.

@@ -2,51 +2,45 @@
 
 ## Overview
 
-The **Modeling the Invisible** workshop forecasting competition is a collaborative scientific exercise focused on predicting influenza-associated hospitalization dynamics.
+The workshop is a forecasting competition focused on influenza-associated hospitalizations.
 
-## Team Structure
+The competition is organized as:
+
+- two independent challenges, representing two independent years
+- three rounds per challenge
+- sequential data releases within each challenge
+- team submissions identified as `Team-01`, `Team-02`, and so on
+
+## Team structure
 
 - Teams may contain between 1 and 4 participants.
-- Participants may belong to only one team.
+- Each participant may belong to only one team.
 - Teams may use any software, programming language, modeling framework, or analysis workflow.
 
-## Competition Structure
-
-The competition consists of multiple sequential forecast rounds.
-
-For each round:
-1. Organizers release updated hospitalization data.
-2. Teams submit forecasts through the release horizon.
-3. Forecasts are scored automatically.
-
-## Forecast Targets
+## Forecast targets
 
 Teams forecast:
 
 - weekly influenza-associated hospitalizations per 100,000 population
-- the effective reproduction number (`r0`)
+- effective reproduction number (`r0`)
 
-## Time System
+## Time system
 
-The competition uses a normalized 40-week influenza season.
-
+- The competition uses a normalized 40-week influenza season.
 - Week numbers are integers.
-- Week 1 corresponds to the beginning of the season.
-- No calendar dates are used in submission files.
+- Week 1 represents the start of the season.
+- No calendar dates are used in submissions.
 
-## Submission Rules
+## Submission rules
 
-Each team submits one CSV file per round.
+- Each team submits one CSV file per challenge round.
+- The submission must include the full predicted weekly trajectory from Week 1 through the forecast horizon.
+- The forecast horizon is defined by the release metadata for that round.
+- Submissions are automatically validated and scored.
 
-Submission files must:
+## Allowed methods
 
-- follow the official repository format
-- contain the full predicted trajectory through the release horizon
-- be committed to the repository before the submission deadline
-
-## Permitted Methods
-
-Participants may use any of the following, including combinations thereof:
+Participants may use any of the following:
 
 - mechanistic epidemic models
 - statistical forecasting models
@@ -54,58 +48,25 @@ Participants may use any of the following, including combinations thereof:
 - Bayesian approaches
 - agent-based simulations
 - hybrid or ensemble methods
-- manual parameter tuning
-- external public datasets
+- external public data sources
 - publicly available software libraries
 
-## Prohibited Activities
+## Only explicit prohibition
 
-The only explicitly forbidden activity is attempting to gain unauthorized access to the organizer's or another participant's computer systems.
+The only activity explicitly forbidden is:
 
-The workshop operates on an honor system emphasizing scientific collaboration and professionalism.
+- hacking into the organizer's or other workshop participants' computer systems
 
-## Scoring
+## Data use
 
-Forecasts are evaluated automatically using held-out ground truth data.
+Released workshop data are intended for workshop use only.
 
-Detailed scoring methodology is documented separately in:
+Participants should not redistribute unpublished organizer-generated data outside the workshop without permission.
 
-```text
-docs/scoring-rules.md
-```
+## Conduct
 
-## Reproducibility
+Participants are expected to communicate respectfully, collaborate constructively, and document their assumptions clearly.
 
-Participants are encouraged to:
+## Organizer authority
 
-- document modeling assumptions
-- preserve reproducible workflows
-- maintain version-controlled code
-- describe uncertainty sources
-
-## Data Usage
-
-Released workshop datasets are intended solely for educational and research purposes within the workshop.
-
-Participants should not redistribute unpublished organizer-generated datasets outside the workshop without permission.
-
-## Workshop Conduct
-
-Participants are expected to:
-
-- engage respectfully with other teams
-- share ideas constructively
-- acknowledge uncertainty honestly
-- contribute to a collaborative workshop atmosphere
-
-## Organizer Authority
-
-Workshop organizers reserve the right to:
-
-- clarify rules
-- resolve ambiguities
-- correct data-release issues
-- modify schedules if necessary
-- remove submissions that violate the competition rules
-
-Any major rule modifications will be documented publicly in the repository.
+Workshop organizers may clarify rules, correct data-release issues, and resolve ambiguities as needed.

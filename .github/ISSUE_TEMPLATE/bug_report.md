@@ -1,14 +1,12 @@
 ---
 name: Bug report
-about: Report a problem with the repository, scoring, or workflow.
-title: "[Bug] "
-labels: bug
+about: Report a problem in the repository materials or workflow
 ---
 
 ## What happened?
 
-## What did you expect to happen?
+## What did you expect?
 
-## Steps to reproduce
+## Relevant file paths
 
-## Relevant files or screenshots
+## Additional details

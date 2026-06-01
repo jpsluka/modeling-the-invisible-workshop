@@ -1,5 +1,5 @@
-# Notebook Utilities
+# Notebooks
 
-This folder contains notebook-friendly plotting code.
+This folder contains local plotting helpers for inspecting team forecasts.
 
-Run `plot_team_forecasts.py` from the repository root or from a Jupyter session with the repository root as the working directory.
+The plotting script can be run from a notebook or as a regular Python script.

@@ -1,182 +1,142 @@
 #!/usr/bin/env python3
-"""Validate prediction CSV files against the public release data and release metadata."""
-
 from __future__ import annotations
 
 import argparse
 import csv
 import json
-import sys
-from dataclasses import dataclass
+import re
 from pathlib import Path
-from typing import Any
 
-EXPECTED_COLUMNS = ["week", "hospitalizations_per_100k", "r0"]
-TOL = 1e-6
-
-
-@dataclass
-class ReleaseInfo:
-    round_num: int
-    released_through_week: int
-    forecast_start_week: int
-    forecast_end_week: int
+EXPECTED_COLUMNS = ['week', 'hospitalizations_per_100k', 'r0']
+CHALLENGE_RE = re.compile(r'^challenge-(\d{2})$')
+ROUND_RE = re.compile(r'^round-(\d{2})\.csv$')
 
 
 class ValidationError(Exception):
     pass
 
 
-def load_release_info(root: Path, round_num: int) -> ReleaseInfo:
-    path = root / "data-release" / f"round-{round_num}" / "release_info.json"
-    if not path.exists():
-        raise ValidationError(f"Missing release metadata: {path}")
-    with path.open(encoding="utf-8") as f:
-        data = json.load(f)
-    required = ["round", "released_through_week", "forecast_start_week", "forecast_end_week"]
-    for key in required:
-        if key not in data:
-            raise ValidationError(f"{path}: missing key '{key}'")
-    if int(data["round"]) != round_num:
-        raise ValidationError(f"{path}: round number does not match filename round-{round_num}.csv")
-    return ReleaseInfo(
-        round_num=round_num,
-        released_through_week=int(data["released_through_week"]),
-        forecast_start_week=int(data["forecast_start_week"]),
-        forecast_end_week=int(data["forecast_end_week"]),
-    )
-
-
-def load_public_release(root: Path, round_num: int) -> dict[int, float]:
-    path = root / "data-release" / f"round-{round_num}" / "release.csv"
-    if not path.exists():
-        raise ValidationError(f"Missing public release file: {path}")
-    with path.open(newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        if reader.fieldnames != ["week", "hospitalizations_per_100k"]:
-            raise ValidationError(
-                f"{path}: expected columns ['week', 'hospitalizations_per_100k'], found {reader.fieldnames}"
-            )
-        data: dict[int, float] = {}
-        for idx, row in enumerate(reader, start=2):
-            try:
-                week = int(row["week"])
-                hosp = float(row["hospitalizations_per_100k"])
-            except Exception as exc:
-                raise ValidationError(f"{path}: row {idx}: invalid numeric value") from exc
-            if week in data:
-                raise ValidationError(f"{path}: duplicate week {week}")
-            data[week] = hosp
-    if not data:
-        raise ValidationError(f"{path}: file is empty")
-    expected = list(range(1, max(data) + 1))
-    if sorted(data) != expected:
-        raise ValidationError(f"{path}: weeks must be contiguous from 1 through {max(data)}")
-    return data
-
-
-def find_prediction_files(root: Path) -> list[Path]:
-    pred_dir = root / "predictions"
-    if not pred_dir.exists():
-        return []
-    files: list[Path] = []
-    for team_dir in sorted(p for p in pred_dir.iterdir() if p.is_dir() and p.name != "template"):
-        for path in sorted(team_dir.glob("round-*.csv")):
-            files.append(path)
-    return files
-
-
-def validate_file(root: Path, path: Path) -> list[str]:
-    errors: list[str] = []
-    round_num = None
-    try:
-        round_num = int(path.stem.split("-")[-1])
-    except Exception:
-        errors.append(f"{path}: filename must be round-N.csv")
-        return errors
-
-    try:
-        info = load_release_info(root, round_num)
-        release = load_public_release(root, round_num)
-    except ValidationError as exc:
-        return [str(exc)]
-
-    with path.open(newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        if reader.fieldnames != EXPECTED_COLUMNS:
-            return [
-                f"{path}: expected columns {EXPECTED_COLUMNS}, found {reader.fieldnames}"
-            ]
+def read_csv(path: Path):
+    with path.open(newline='', encoding='utf-8') as fh:
+        reader = csv.DictReader(fh)
         rows = list(reader)
+        return reader.fieldnames, rows
+
+
+def load_json(path: Path):
+    return json.loads(path.read_text(encoding='utf-8'))
+
+
+def parse_int(value: str, path: Path, field: str) -> int:
+    try:
+        return int(value)
+    except Exception as exc:
+        raise ValidationError(f'{path}: invalid integer in {field}: {value!r}') from exc
+
+
+def parse_float(value: str, path: Path, field: str) -> float:
+    try:
+        return float(value)
+    except Exception as exc:
+        raise ValidationError(f'{path}: invalid numeric value in {field}: {value!r}') from exc
+
+
+def find_repo_root(start: Path) -> Path:
+    for candidate in [start, *start.parents]:
+        if (candidate / 'data-release').exists() and (candidate / 'predictions').exists():
+            return candidate
+    raise ValidationError('Could not locate repository root (missing data-release and predictions).')
+
+
+def validate_prediction_file(root: Path, pred_path: Path) -> None:
+    team_name = pred_path.parents[1].name
+    challenge_name = pred_path.parents[0].name
+    round_name = pred_path.name
+
+    if not team_name.startswith('Team-'):
+        raise ValidationError(f'{pred_path}: team folder must use Team-XX naming')
+
+    if not CHALLENGE_RE.match(challenge_name):
+        raise ValidationError(f'{pred_path}: challenge folder must use challenge-XX naming')
+
+    if not ROUND_RE.match(round_name):
+        raise ValidationError(f'{pred_path}: round file must use round-XX.csv naming')
+
+    challenge_id = int(challenge_name.split('-')[1])
+    round_id = int(Path(round_name).stem.split('-')[1])
+
+    release_info_path = root / 'data-release' / challenge_name / f'round-{round_id:02d}' / 'release_info.json'
+    if not release_info_path.exists():
+        raise ValidationError(f'{pred_path}: missing release metadata {release_info_path}')
+
+    release_info = load_json(release_info_path)
+    forecast_start = int(release_info['forecast_start_week'])
+    forecast_end = int(release_info['forecast_end_week'])
+    released_through = int(release_info['released_through_week'])
+
+    if forecast_start != released_through + 1:
+        raise ValidationError(f'{pred_path}: forecast_start_week must equal released_through_week + 1')
+
+    fieldnames, rows = read_csv(pred_path)
+    if fieldnames != EXPECTED_COLUMNS:
+        raise ValidationError(f'{pred_path}: expected header {EXPECTED_COLUMNS}, found {fieldnames}')
 
     if not rows:
-        return [f"{path}: file is empty"]
+        raise ValidationError(f'{pred_path}: file is empty')
 
-    weeks: list[int] = []
+    weeks = []
     seen = set()
-    parsed_rows: dict[int, tuple[float, float]] = {}
-    for idx, row in enumerate(rows, start=2):
-        try:
-            week = int(row["week"])
-            hosp = float(row["hospitalizations_per_100k"])
-            r0 = float(row["r0"])
-        except Exception as exc:
-            errors.append(f"{path}: row {idx}: non-numeric value")
-            continue
+    for row in rows:
+        week = parse_int(row['week'], pred_path, 'week')
+        hosp = parse_float(row['hospitalizations_per_100k'], pred_path, 'hospitalizations_per_100k')
+        r0 = parse_float(row['r0'], pred_path, 'r0')
         if week in seen:
-            errors.append(f"{path}: row {idx}: duplicate week {week}")
+            raise ValidationError(f'{pred_path}: duplicate week {week}')
         seen.add(week)
         weeks.append(week)
-        parsed_rows[week] = (hosp, r0)
+        _ = hosp
+        _ = r0
 
-    expected_weeks = list(range(1, info.forecast_end_week + 1))
+    expected_weeks = list(range(1, forecast_end + 1))
     if weeks != expected_weeks:
-        errors.append(
-            f"{path}: weeks must run exactly from 1 through {info.forecast_end_week} in ascending order"
+        raise ValidationError(
+            f'{pred_path}: weeks must be exactly 1..{forecast_end} in order; found {weeks[:5]}...{weeks[-5:]}'
         )
 
-    if info.forecast_start_week != info.released_through_week + 1:
-        errors.append(
-            f"{path}: forecast_start_week should equal released_through_week + 1"
-        )
 
-    for week in range(1, info.released_through_week + 1):
-        if week not in parsed_rows:
-            errors.append(f"{path}: missing released week {week}")
+def iter_prediction_files(root: Path):
+    for team_dir in sorted((root / 'predictions').glob('Team-*')):
+        if not team_dir.is_dir():
             continue
-        pred_hosp, _ = parsed_rows[week]
-        if abs(pred_hosp - release[week]) > TOL:
-            errors.append(
-                f"{path}: week {week} hospitalizations_per_100k does not match released data"
-            )
-
-    return errors
+        for challenge_dir in sorted(team_dir.glob('challenge-*')):
+            if not challenge_dir.is_dir():
+                continue
+            for pred_file in sorted(challenge_dir.glob('round-*.csv')):
+                yield pred_file
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument('--root', type=Path, default=Path('.'))
     args = parser.parse_args()
 
-    root = args.root.resolve()
-    files = find_prediction_files(root)
-    if not files:
-        print("No prediction files found.")
-        return 0
-
-    errors: list[str] = []
-    for path in files:
-        errors.extend(validate_file(root, path))
+    root = find_repo_root(args.root.resolve())
+    errors = []
+    for pred_file in iter_prediction_files(root):
+        try:
+            validate_prediction_file(root, pred_file)
+        except Exception as exc:
+            errors.append(str(exc))
 
     if errors:
-        print("Validation failed:\n")
+        print('Validation failed:')
         for err in errors:
-            print(f"- {err}")
+            print(f'- {err}')
         return 1
 
-    print(f"Validated {len(files)} prediction file(s) successfully.")
+    print('Validation passed.')
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())
