@@ -1,4 +1,0 @@
-# Local-only and generated Python artifacts
-.DS_Store
-*.pyc
-__pycache__/
