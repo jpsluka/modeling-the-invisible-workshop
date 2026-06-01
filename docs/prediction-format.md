@@ -5,18 +5,17 @@ This document defines the exact CSV format for team submissions.
 ## Forecast setup
 
 - The season is 40 weeks long.
-- Week numbers are integers from 1 to 40.
-- Week 1 is the first week of the season.
-- Week 1 ends on October 7.
+- Week numbers are integers from 0 to 39.
+- Week 0 is the first week of the season.
+- Week 0 ends on October 7.
 - All dates in the repository are represented as week integers, not calendar dates.
-- Each submission forecasts exactly **four weeks** beyond the data released for that round.
+- Each submission forecasts exactly the specified number of weeks beyond the data released for that round.
 
 If a round releases data through week `W`, then the submission must include forecasts for:
 
 - `W + 1`
-- `W + 2`
-- `W + 3`
-- `W + 4`
+- ...
+- `W + n`
 
 ## File location
 
