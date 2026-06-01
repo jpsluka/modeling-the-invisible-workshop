@@ -14,4 +14,4 @@ For the workshop workflow, the three challenge rounds are organized as staged re
 | 2 | 16 | 17, 18, 19, 20 |
 | 3 | 24 | 25, 26, 27, 28 |
 
-Organizers may adjust the release weeks, but every submission must always forecast exactly four weeks beyond the released data for that round.
+Organizers may adjust the release weeks, but every submission must always forecast a specified number of weeks forward, typicall four or five weeks beyond the released data for that round.
