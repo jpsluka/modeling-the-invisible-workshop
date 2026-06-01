@@ -1,5 +1,0 @@
-team_name,challenge_round,release_week,forecast_week,hospitalizations_per_100k_pred,r0_pred,model_name,model_parameters
-team-alpha,1,8,9,15.1,1.29,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,8,10,15.8,1.31,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,8,11,16.8,1.32,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,8,12,17.3,1.35,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
