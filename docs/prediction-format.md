@@ -1,98 +1,180 @@
-# Prediction Format
+# Prediction Submission Format
 
-This document defines the exact CSV format for team submissions.
+This document defines the official submission format for the Modeling the Invisible Workshop Forecasting Competition.
 
-## Forecast setup
+---
 
-- The season is 40 weeks long.
-- Week numbers are integers from 0 to 39.
-- Week 0 is the first week of the season.
-- Week 0 ends on October 7.
-- All dates in the repository are represented as week integers, not calendar dates.
-- Each submission forecasts exactly the specified number of weeks beyond the data released for that round.
+## Overview
 
-If a round releases data through week `W`, then the submission must include forecasts for:
+Each team submits one prediction file for each competition round.
 
-- `W + 1`
-- ...
-- `W + n`
+Prediction files contain:
 
-## File location
+* the team's estimate of the hospitalization trajectory from Week 1 through the end of the forecast horizon for the current round
+* estimates of the effective reproduction number (R0)
 
-Each team submits one file per round:
+The forecast horizon is specified by the current data release and may vary between rounds.
 
-```text
-predictions/<team-name>/round-<n>.csv
+Typical forecast horizons range from 3 to 6 weeks beyond the released data.
+
+## Competition Time Scale
+
+The competition uses a normalized influenza season consisting of 40 weeks.
+
+* Week numbers are integers.
+* Week 1 represents the start of the season.
+* No calendar dates are used.
+* All submissions use week numbers.
+
+---
+
+## Data Release Information
+
+Each competition round includes a release metadata file:
+
+`data-release/round-N/release_info.json`
+
+Example:
+
+```{
+  "round": 2,
+  "released_through_week": 18,
+  "forecast_start_week": 19,
+  "forecast_end_week": 24
+}
 ```
+
+This file defines the required forecast horizon.
+
+Teams must submit predictions through `forecast_end_week`.
+
+---
+
+## Submission Location
+
+Prediction files must be submitted to:
+
+`predictions/<team-name>/round-N.csv`
 
 Examples:
 
-```text
+```
 predictions/team-alpha/round-1.csv
-predictions/iu-epi/round-2.csv
-predictions/team-b/round-3.csv
+predictions/team-alpha/round-2.csv
+predictions/team-alpha/round-3.csv
+```
+---
+
+## Required Columns
+
+The prediction file must contain the following columns.
+
+|Column |	Type |	Description |	
+| :--- | :--- | :--- |
+|week	 |	integer	 |	Week number |	
+|hospitalizations_per_100k	 |	float	| Predicted hospitalization rate per 100,000 population |	
+|r0	 |	float |	Predicted effective reproduction number |	
+
+---
+
+## Submission Requirements
+
+The submission must:
+
+Begin with Week 1.
+Include all weeks through the forecast horizon specified in the release.
+Contain exactly one row per week.
+Use ascending week order.
+Contain no missing week numbers.
+
+For example, if:
+
+```
+{
+  "released_through_week": 12,
+  "forecast_end_week": 16
+}
 ```
 
-## Required columns
+then the prediction file must contain:
 
-The CSV header must be exactly:
+`weeks 1–16`
 
-```csv
-team_name,challenge_round,release_week,forecast_week,hospitalizations_per_100k_pred,r0_pred,model_name,model_parameters
+## Example Submission
+```
+week,hospitalizations_per_100k,r0
+1,0.82,1.32
+2,0.95,1.30
+3,1.11,1.28
+4,1.26,1.25
+5,1.40,1.23
+6,1.55,1.21
+7,1.82,1.18
+8,2.05,1.16
+9,2.31,1.14
+10,2.62,1.12
+11,2.95,1.10
+12,3.30,1.08
+13,3.75,1.05
+14,4.10,1.02
+15,4.35,0.99
+16,4.45,0.96
 ```
 
-## Column definitions
+## Validation Rules
 
-| Column | Type | Description |
-|---|---|---|
-| team_name | string | Team name; must match the folder name |
-| challenge_round | integer | Challenge round number, must be 1, 2, or 3 |
-| release_week | integer | Last week included in the released data for that round |
-| forecast_week | integer | Future week being predicted |
-| hospitalizations_per_100k_pred | float | Predicted hospitalization rate per 100,000 individuals |
-| r0_pred | float | Predicted R0 value for that forecast week |
-| model_name | string | Short name of the model used |
-| model_parameters | JSON object | JSON-encoded model parameters, written as a single CSV cell |
+Submissions automatically fail validation if:
 
-## Required row structure
+* required columns are missing
+* week values are not integers
+* week numbers are not strictly increasing
+* required forecast weeks are missing
+* duplicate weeks exist
+* non-numeric values appear in numeric fields
 
-Each submission must:
+## Forecast Horizon
 
-- contain exactly four data rows
-- use the same `team_name` in every row
-- use the same `challenge_round` in every row
-- use the same `release_week` in every row
-- use the same `model_name` in every row
-- use the same `model_parameters` in every row
-- include one row for each of the four forecast weeks beyond the release week
+The forecast horizon is determined solely by the current release metadata.
 
-For a release week of 8, the required forecast weeks are 9, 10, 11, and 12.
+Teams should not assume a fixed forecast length.
 
-## Example submission
+Examples:
 
-```csv
-team_name,challenge_round,release_week,forecast_week,hospitalizations_per_100k_pred,r0_pred,model_name,model_parameters
-team-alpha,1,8,9,15.2,1.31,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,8,10,15.8,1.33,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,8,11,16.6,1.35,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
-team-alpha,1,8,12,17.1,1.36,SEIR-v2,"{""beta"":0.34,""gamma"":0.11}"
+| Released Through| 	Forecast Horizon| 
+| Week 12	| Weeks 13–16| 
+| Week 18	| Weeks 19–24| 
+| Week 28	| Weeks 29–31| 
+
+The required horizon may vary from round to round.
+
+## R0 Estimates
+
+The r0 column is required.
+
+R0 values must be numeric.
+
+## Ground Truth Data
+
+Released data are provided in:
+
+`data-release/round-N/round-N.csv`
+
+with format:
+
+```
+week,hospitalizations_per_100k
+1,0.82
+2,0.95
+3,1.11
 ```
 
-## Validation rules
+## Reproducibility
 
-Submissions fail validation if any of the following are true:
+Teams are encouraged to:
 
-- required columns are missing
-- the header does not match exactly
-- `challenge_round` is not 1, 2, or 3
-- `release_week` is not an integer between 1 and 36
-- `forecast_week` is not one of the four expected future weeks
-- any required field is blank
-- numeric fields cannot be parsed as numbers
-- `model_parameters` is not valid JSON
-- `model_parameters` is not a JSON object
-- the file contains more or fewer than four data rows
+* document assumptions
+* preserve code used to generate forecasts
+* maintain version control
+* describe uncertainty sources
 
-## Organizers
-
-The scoring workflow expects the file structure and column names above to remain stable.
+The repository serves as the official archive of all submissions.
