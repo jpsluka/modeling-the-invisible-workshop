@@ -1,7 +1,6 @@
 {
-  "challenge_id": 1,
+  "challenge_id": "challenge-01",
   "challenge_name": "Challenge 01",
-  "season_label": "Year 1",
-  "num_rounds": 3,
-  "season_weeks": 40
+  "season_label": "Independent year",
+  "num_releases": 4
 }

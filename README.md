@@ -1,51 +1,20 @@
 # Modeling the Invisible Workshop
 
-This repository supports the workshop **Modeling the Invisible: Competition on Forecasting Viral Spread with Limited Data**.
+Release-driven forecasting repository for two independent challenges.
 
-The competition is organized as:
+## Main ideas
 
-- **2 independent challenges** (two different years)
-- **3 rounds per challenge**
-- **sequential data releases within each challenge**
-- **team submissions using numeric team IDs** (`Team-01`, `Team-02`, ...)
-
-Each round releases updated hospitalization data for that challenge-year, and each team submits a full weekly forecast trajectory through the round-specific horizon.
-
-## Repository layout
-
-- `data-release/` — release metadata and released data for each challenge and round
-- `predictions/` — team submissions, grouped by team and challenge
-- `scoring/` — hidden reference answers, leaderboard outputs, and scoring scripts
-- `docs/` — rules and file-format documentation
-- `.github/workflows/` — GitHub Actions workflow for validation and scoring
-- `notebooks/` — local plotting helpers for exploring team forecasts
+- Two independent challenges represent two independent years.
+- Each challenge has multiple rounds.
+- Organizers publish a new release to open the next round.
+- The next release also closes and scores the previous round.
+- Team folders are anonymous and numeric: `Team-01`, `Team-02`, and so on.
 
 ## Workflow
 
-1. Organizers release a new round under `data-release/challenge-XX/round-YY/`.
-2. Teams update `predictions/Team-XX/challenge-XX/round-YY.csv`.
-3. GitHub Actions validates prediction files.
-4. GitHub Actions scores submissions against the hidden reference answers.
-5. Updated leaderboards are written to `scoring/`.
+1. Organizers publish `data-release/challenge-XX/release-YY/`.
+2. Teams update prediction files in `predictions/Team-XX/challenge-YY/`.
+3. GitHub Actions validates the release and scores the newly closed round.
+4. Leaderboards are regenerated automatically.
 
-## Competition rules and formats
-
-- [Competition Rules](docs/competition-rules.md)
-- [Prediction Format](docs/prediction-format.md)
-- [Scoring Rules](docs/scoring-rules.md)
-
-## Local plotting
-
-The notebook-friendly plotting helper is in:
-
-- `notebooks/plot_team_forecasts.py`
-
-It creates per-team visual summaries and aggregate plots from the repository data.
-
-## Quick start
-
-```bash
-python scoring/scripts/validate_predictions.py --root .
-python scoring/scripts/score_predictions.py --root .
-```
-
+See `docs/prediction-format.md`, `docs/scoring-rules.md`, and `docs/workflow.md`.

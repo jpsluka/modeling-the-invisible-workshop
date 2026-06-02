@@ -1,12 +1,7 @@
 ---
 name: Bug report
-about: Report a problem in the repository materials or workflow
+about: Report a repository problem
+labels: bug
 ---
 
-## What happened?
-
-## What did you expect?
-
-## Relevant file paths
-
-## Additional details
+Describe the issue, file path, and expected behavior.

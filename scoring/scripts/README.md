@@ -1,11 +1,5 @@
 # Scoring Scripts
 
-- `validate_predictions.py` checks submission structure, filenames, week coverage, and numeric fields.
-- `score_predictions.py` compares each team's forecast weeks against the hidden reference answers and writes leaderboards.
-
-Run locally:
-
-```bash
-python scoring/scripts/validate_predictions.py --root .
-python scoring/scripts/score_predictions.py --root .
-```
+- `validate_release.py` checks release folders and release metadata.
+- `validate_predictions.py` checks team predictions against the matching release horizon.
+- `score_predictions.py` computes round, challenge, and overall scores.

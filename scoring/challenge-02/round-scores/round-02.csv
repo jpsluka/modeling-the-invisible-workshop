@@ -1,3 +1,3 @@
-team_id,challenge_id,round_id,hosp_rmse,hosp_nrmse,r0_mape,round_score
-Team-02,challenge-02,02,0.013616,0.005123,0.006314,0.005719
-Team-01,challenge-02,02,0.066332,0.024958,0.001883,0.013420
+team_id,round_id,hosp_rmse,hosp_nrmse,r0_rmse,round_score
+Team-02,2,0.074205,0.050728,0.01173,0.031229
+Team-01,2,0.077599,0.053048,0.067412,0.06023

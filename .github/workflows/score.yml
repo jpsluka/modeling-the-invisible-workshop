@@ -3,16 +3,9 @@ name: Validate and score workshop submissions
 on:
   push:
     paths:
-      - 'predictions/**'
-      - 'data-release/**'
-      - 'scoring/scripts/**'
-      - '.github/workflows/score.yml'
-  pull_request:
-    paths:
-      - 'predictions/**'
-      - 'data-release/**'
-      - 'scoring/scripts/**'
-      - '.github/workflows/score.yml'
+      - "data-release/**"
+      - "scoring/scripts/**"
+      - ".github/workflows/score.yml"
   workflow_dispatch:
 
 permissions:
@@ -35,12 +28,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Validate release files
+        run: python scoring/scripts/validate_release.py --root .
 
       - name: Validate submissions
         run: python scoring/scripts/validate_predictions.py --root .
@@ -64,18 +60,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Stage all generated scoring outputs
           git add scoring
-
-          # Exit cleanly if nothing changed
           if git diff --cached --quiet; then
             echo "No scoring changes to commit."
             exit 0
           fi
-
           git commit -m "Update automated leaderboard"
-
-          git push \
-            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-            HEAD:${GITHUB_REF_NAME}
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:${GITHUB_REF_NAME}

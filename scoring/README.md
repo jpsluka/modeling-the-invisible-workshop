@@ -1,23 +1,7 @@
-# Scoring
+# Scoring Outputs
 
-This folder contains the hidden reference answers, leaderboard outputs, and scoring scripts.
+This folder is populated automatically by the workflow.
 
-## Structure
-
-```text
-scoring/
-  challenge-01/
-    reference_answers/
-      round-01.csv
-      round-02.csv
-      round-03.csv
-    round-scores/
-      round-01.csv
-      round-02.csv
-      round-03.csv
-    leaderboard.csv
-  challenge-02/
-    ...
-  overall-leaderboard.csv
-  scripts/
-```
+- `scoring/challenge-01/leaderboard.csv`
+- `scoring/challenge-02/leaderboard.csv`
+- `scoring/overall-leaderboard.csv`

@@ -1,3 +1,3 @@
-rank,team_id,challenge_score
-1,Team-02,0.014103773616842794
-2,Team-01,0.023970415083217723
+team_id,challenge_id,challenge_score,rounds_scored
+Team-01,challenge-01,0.102736,3
+Team-02,challenge-01,0.135051,3

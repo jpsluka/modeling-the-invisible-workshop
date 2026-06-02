@@ -1,159 +1,129 @@
-#!/usr/bin/env python3
 from __future__ import annotations
 
 import argparse
 import csv
 import json
 import math
+from collections import defaultdict
 from pathlib import Path
 
-import pandas as pd
 
-EXPECTED_COLUMNS = ['week', 'hospitalizations_per_100k', 'r0']
-
-
-def find_repo_root(start: Path) -> Path:
-    for candidate in [start, *start.parents]:
-        if (candidate / 'data-release').exists() and (candidate / 'predictions').exists():
-            return candidate
-    raise FileNotFoundError('Could not locate repository root.')
+def read_csv(path: Path):
+    with path.open(newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
 
 
-def read_csv(path: Path) -> pd.DataFrame:
-    df = pd.read_csv(path)
-    df.columns = [c.strip() for c in df.columns]
-    return df
+def write_csv(path: Path, header: list[str], rows: list[dict]):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=header)
+        w.writeheader()
+        w.writerows(rows)
 
 
-def read_json(path: Path):
-    return json.loads(path.read_text(encoding='utf-8'))
-
-
-def challenge_key(path: Path) -> str:
-    return path.parents[0].name
-
-
-def round_key(path: Path) -> int:
-    return int(path.stem.split('-')[1])
-
-
-def team_name_from_path(path: Path) -> str:
-    return path.parents[1].name
-
-
-def load_truth(root: Path, challenge_name: str, round_id: int) -> pd.DataFrame:
-    return read_csv(root / 'scoring' / challenge_name / 'reference_answers' / f'round-{round_id:02d}.csv')
-
-
-def load_release_info(root: Path, challenge_name: str, round_id: int) -> dict:
-    return read_json(root / 'data-release' / challenge_name / f'round-{round_id:02d}' / 'release_info.json')
-
-
-def score_round(pred_df: pd.DataFrame, truth_df: pd.DataFrame, forecast_start: int, forecast_end: int) -> dict:
-    pred = pred_df[(pred_df['week'] >= forecast_start) & (pred_df['week'] <= forecast_end)].copy()
-    truth = truth_df[(truth_df['week'] >= forecast_start) & (truth_df['week'] <= forecast_end)].copy()
-
-    merged = pred.merge(truth, on='week', suffixes=('_pred', '_truth'))
-    if merged.empty:
-        raise ValueError('No overlapping forecast weeks to score.')
-
-    hosp_rmse = math.sqrt(((merged['hospitalizations_per_100k_pred'] - merged['hospitalizations_per_100k_truth']) ** 2).mean())
-    hosp_mean = merged['hospitalizations_per_100k_truth'].mean()
-    hosp_nrmse = hosp_rmse / hosp_mean if hosp_mean else hosp_rmse
-
-    r0_err = []
-    for pred_v, truth_v in zip(merged['r0_pred'], merged['r0_truth']):
-        if truth_v == 0:
-            r0_err.append(abs(pred_v - truth_v))
-        else:
-            r0_err.append(abs(pred_v - truth_v) / abs(truth_v))
-    r0_mape = sum(r0_err) / len(r0_err)
-
-    round_score = (hosp_nrmse + r0_mape) / 2.0
-    return {
-        'hosp_rmse': hosp_rmse,
-        'hosp_nrmse': hosp_nrmse,
-        'r0_mape': r0_mape,
-        'round_score': round_score,
-    }
-
-
-def prediction_files(root: Path):
-    yield from sorted((root / 'predictions').glob('Team-*/challenge-*/round-*.csv'))
+def rmse(xs, ys):
+    if not xs:
+        return float("nan")
+    return math.sqrt(sum((x - y) ** 2 for x, y in zip(xs, ys)) / len(xs))
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument('--root', type=Path, default=Path('.'))
+    parser.add_argument("--root", type=Path, default=Path("."))
     args = parser.parse_args()
+    root = args.root.resolve()
 
-    root = find_repo_root(args.root.resolve())
+    pred_root = root / "predictions"
+    release_root = root / "data-release"
+    scoring_root = root / "scoring"
 
-    by_team_challenge = {}
-    for pred_path in prediction_files(root):
-        team = team_name_from_path(pred_path)
-        challenge = challenge_key(pred_path)
-        round_id = round_key(pred_path)
-        by_team_challenge.setdefault(team, {}).setdefault(challenge, {})[round_id] = pred_path
+    challenge_round_scores = defaultdict(lambda: defaultdict(list))
+    team_challenge_scores = defaultdict(lambda: defaultdict(list))
 
-    # Per-round and per-challenge results
-    challenge_scores = {}
-    for challenge in ['challenge-01', 'challenge-02']:
-        challenge_dir = root / 'scoring' / challenge
-        (challenge_dir / 'round-scores').mkdir(parents=True, exist_ok=True)
-        round_tables = []
+    for challenge_dir in sorted(release_root.glob("challenge-*")):
+        if not challenge_dir.is_dir():
+            continue
+        for release_dir in sorted(challenge_dir.glob("release-*")):
+            info_path = release_dir / "release_info.json"
+            truth_path = release_dir / "truth_previous_round.csv"
+            if not info_path.exists() or not truth_path.exists():
+                continue
+            info = json.loads(info_path.read_text(encoding="utf-8"))
+            round_id = info.get("scores_round_id")
+            if round_id is None:
+                continue
+            start = int(info["scores_round_start_week"])
+            end = int(info["scores_round_end_week"])
+            target_weeks = list(range(start, end + 1))
+            truth_rows = read_csv(truth_path)
+            truth_map = {int(r["week"]): r for r in truth_rows}
+            hosp_truth = [float(truth_map[w]["hospitalizations_per_100k"]) for w in target_weeks]
+            r0_truth = [float(truth_map[w]["r0"]) for w in target_weeks]
 
-        for round_id in [1, 2, 3]:
-            rows = []
-            for team in sorted(by_team_challenge.keys()):
-                pred_path = by_team_challenge.get(team, {}).get(challenge, {}).get(round_id)
-                if pred_path is None:
+            round_rows = []
+            for team_dir in sorted(pred_root.glob("Team-*")):
+                pred_file = team_dir / challenge_dir.name / f"round-{round_id:02d}.csv"
+                if not pred_file.exists():
                     continue
-                pred_df = read_csv(pred_path)
-                truth_df = load_truth(root, challenge, round_id)
-                release_info = load_release_info(root, challenge, round_id)
-                scores = score_round(pred_df, truth_df, int(release_info['forecast_start_week']), int(release_info['forecast_end_week']))
-                rows.append({
-                    'team_id': team,
-                    'challenge_id': challenge,
-                    'round_id': f'{round_id:02d}',
-                    **scores,
-                })
-            rows.sort(key=lambda r: (r['round_score'], r['team_id']))
-            with (challenge_dir / 'round-scores' / f'round-{round_id:02d}.csv').open('w', newline='', encoding='utf-8') as fh:
-                writer = csv.DictWriter(fh, fieldnames=['team_id', 'challenge_id', 'round_id', 'hosp_rmse', 'hosp_nrmse', 'r0_mape', 'round_score'])
-                writer.writeheader()
-                for row in rows:
-                    writer.writerow({k: (f'{v:.6f}' if isinstance(v, float) else v) for k, v in row.items()})
-            round_tables.append(pd.DataFrame(rows))
+                pred_rows = read_csv(pred_file)
+                pred_map = {int(r["week"]): r for r in pred_rows}
+                pred_h = [float(pred_map[w]["hospitalizations_per_100k"]) for w in target_weeks]
+                pred_r0 = [float(pred_map[w]["r0"]) for w in target_weeks]
+                hosp_rmse = rmse(pred_h, hosp_truth)
+                r0_rmse = rmse(pred_r0, r0_truth)
+                scale = sum(hosp_truth) / len(hosp_truth)
+                hosp_nrmse = hosp_rmse / scale if scale else hosp_rmse
+                round_score = (hosp_nrmse + r0_rmse) / 2.0
+                row = {
+                    "team_id": team_dir.name,
+                    "round_id": round_id,
+                    "hosp_rmse": round(hosp_rmse, 6),
+                    "hosp_nrmse": round(hosp_nrmse, 6),
+                    "r0_rmse": round(r0_rmse, 6),
+                    "round_score": round(round_score, 6),
+                }
+                round_rows.append(row)
+                team_challenge_scores[team_dir.name][challenge_dir.name].append(round_score)
+                challenge_round_scores[challenge_dir.name][round_id].append(row)
 
-        if round_tables:
-            combined = pd.concat(round_tables, ignore_index=True)
-            combined['round_score'] = pd.to_numeric(combined['round_score'])
-            challenge_scores[challenge] = combined.groupby('team_id', as_index=False)['round_score'].mean().rename(columns={'round_score': 'challenge_score'})
-            challenge_scores[challenge] = challenge_scores[challenge].sort_values(['challenge_score', 'team_id'])
-            challenge_scores[challenge].insert(0, 'rank', range(1, len(challenge_scores[challenge]) + 1))
-            challenge_scores[challenge].to_csv(challenge_dir / 'leaderboard.csv', index=False)
+            round_rows.sort(key=lambda r: (r["round_score"], r["team_id"]))
+            write_csv(
+                scoring_root / challenge_dir.name / "round-scores" / f"round-{round_id:02d}.csv",
+                ["team_id", "round_id", "hosp_rmse", "hosp_nrmse", "r0_rmse", "round_score"],
+                round_rows,
+            )
 
-    # Overall leaderboard
-    all_rows = None
-    for challenge, df in challenge_scores.items():
-        d = df[['team_id', 'challenge_score']].rename(columns={'challenge_score': challenge.replace('-', '_')})
-        all_rows = d if all_rows is None else all_rows.merge(d, on='team_id', how='outer')
+    for challenge_name in sorted(challenge_round_scores.keys()):
+        rows = []
+        for team_id, per_challenge in team_challenge_scores.items():
+            if challenge_name not in per_challenge:
+                continue
+            vals = per_challenge[challenge_name]
+            rows.append({
+                "team_id": team_id,
+                "challenge_id": challenge_name,
+                "challenge_score": round(sum(vals) / len(vals), 6),
+                "rounds_scored": len(vals),
+            })
+        rows.sort(key=lambda r: (r["challenge_score"], r["team_id"]))
+        write_csv(scoring_root / challenge_name / "leaderboard.csv", ["team_id", "challenge_id", "challenge_score", "rounds_scored"], rows)
 
-    if all_rows is None:
-        raise RuntimeError('No score data generated.')
+    overall_rows = []
+    for team_id, per_challenge in team_challenge_scores.items():
+        vals = [sum(v) / len(v) for v in per_challenge.values() if v]
+        if not vals:
+            continue
+        overall_rows.append({
+            "team_id": team_id,
+            "overall_score": round(sum(vals) / len(vals), 6),
+            "challenges_scored": len(vals),
+        })
+    overall_rows.sort(key=lambda r: (r["overall_score"], r["team_id"]))
+    write_csv(scoring_root / "overall-leaderboard.csv", ["team_id", "overall_score", "challenges_scored"], overall_rows)
 
-    all_rows['challenge_01'] = pd.to_numeric(all_rows['challenge_01'])
-    all_rows['challenge_02'] = pd.to_numeric(all_rows['challenge_02'])
-    all_rows['overall_score'] = all_rows[['challenge_01', 'challenge_02']].mean(axis=1)
-    all_rows = all_rows.sort_values(['overall_score', 'team_id']).reset_index(drop=True)
-    all_rows.insert(0, 'rank', range(1, len(all_rows) + 1))
-    all_rows = all_rows[['rank', 'team_id', 'challenge_01', 'challenge_02', 'overall_score']]
-    all_rows.to_csv(root / 'scoring' / 'overall-leaderboard.csv', index=False)
-    print('Scoring complete.')
+    print("Scoring complete.")
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     raise SystemExit(main())
