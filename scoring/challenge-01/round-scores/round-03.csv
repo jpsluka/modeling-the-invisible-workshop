@@ -1,3 +1,0 @@
-team_id,round_id,hosp_rmse,hosp_nrmse,r0_rmse,round_score
-Team-01,3,0.059839,0.031942,0.12444,0.078191
-Team-02,3,0.182504,0.097422,0.234125,0.165774
