@@ -73,7 +73,8 @@ def plot_team_challenge(team_dir: Path, challenge_dir: Path) -> None:
 
     # Use the latest scored release for this challenge to get the public curve.
     latest_round_num = max(int(p.stem.split("-")[1]) for p in round_files)
-    release_dir, release_info = find_release_for_round(challenge_dir.parent.parent / challenge_dir.name, latest_round_num)  # challenge_dir is predictions/Team-XX/challenge-YY
+    release_challenge_dir = DATA_RELEASE_ROOT / challenge_dir.name
+    release_dir, release_info = find_release_for_round(release_challenge_dir, latest_round_num)
     public_rows = load_public_data(release_dir)
 
     public_weeks = [int(r["week"]) for r in public_rows]
