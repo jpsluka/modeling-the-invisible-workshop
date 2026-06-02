@@ -1,0 +1,8 @@
+ 
+{ 
+  "challenge_id": "challenge-01",
+  "release_id": 3,
+  "released_through_week": 20,
+  "forecast_start_week": 21,
+  "forecast_end_week": 24
+}
