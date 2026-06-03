@@ -12,6 +12,11 @@ def read_csv(path: Path):
     with path.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
+# Weighted round score:
+#   80% hospitalization forecast accuracy
+#   20% R0 forecast accuracy
+HOSP_WEIGHT = 0.8
+R0_WEIGHT = 0.2
 
 def write_csv(path: Path, header: list[str], rows: list[dict]):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -73,7 +78,9 @@ def main() -> int:
                 r0_rmse = rmse(pred_r0, r0_truth)
                 scale = sum(hosp_truth) / len(hosp_truth)
                 hosp_nrmse = hosp_rmse / scale if scale else hosp_rmse
-                round_score = (hosp_nrmse + r0_rmse) / 2.0
+                #round_score = (hosp_nrmse + r0_rmse) / 2.0
+                round_score = (HOSP_WEIGHT * hosp_nrmse) + (R0_WEIGHT * r0_rmse)
+                
                 row = {
                     "team_id": team_dir.name,
                     "round_id": round_id,
