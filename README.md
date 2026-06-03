@@ -17,4 +17,4 @@ Release-driven forecasting repository for two independent challenges.
 3. GitHub Actions validates the release and scores the newly closed round.
 4. Leaderboards are regenerated automatically.
 
-See `docs/prediction-format.md`, `docs/scoring-rules.md`, and `docs/workflow.md`.
+See `docs/prediction-format.md`, `docs/scoring-rules.md`, and `docs/workflow.md`. 
