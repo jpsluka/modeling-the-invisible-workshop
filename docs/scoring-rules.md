@@ -16,10 +16,9 @@ Historical released weeks are not counted.
 
 ## Round score
 
-The round score is the mean of:
+Scores are calculated using weighting to combine the hospitalization_nRMS and the R0_RMSE. The two are combined with;
 
-- hospitalization nRMSE
-- R0 RMSE
+`round_score = 0.8 × hospitalization_nRMSE + 0.2 × R0_RMSE`
 
 ## Challenge score
 
