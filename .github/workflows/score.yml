@@ -5,6 +5,8 @@ on:
     paths:
       - "data-release/**"
       - "scoring/scripts/**"
+      - "notebooks/plot_predictions.py"
+      - "requirements.txt"
       - ".github/workflows/score.yml"
   workflow_dispatch:
 
@@ -21,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -46,13 +48,14 @@ jobs:
 
       - name: Generate plots
         run: python notebooks/plot_predictions.py
-        
+
       - name: Upload scoring artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: workshop-scores
+          name: workshop-results
           path: |
             scoring/**/*.csv
+            scoring/plots/**
           if-no-files-found: error
           retention-days: 30
 
