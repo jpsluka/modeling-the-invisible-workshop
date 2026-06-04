@@ -19,6 +19,72 @@ RELEASE_RE = re.compile(r"^release-\d{2}$")
 ROUND_RE = re.compile(r"^round-\d{2}\.csv$")
 
 
+def plot_all_teams_for_challenge(challenge_dir: Path) -> None:
+    """
+    Plot the released data plus one line per team on a single figure.
+    Lines only: no markers.
+    """
+    # Find the latest release that has public data for this challenge
+    release_dirs = sorted(
+        [p for p in (DATA_RELEASE_ROOT / challenge_dir.name).iterdir() if p.is_dir() and RELEASE_RE.match(p.name)],
+        key=lambda p: int(p.name.split("-")[1]),
+    )
+    if not release_dirs:
+        raise FileNotFoundError(f"No releases found for {challenge_dir.name}")
+
+    latest_release_dir = release_dirs[-1]
+    public_rows = load_public_data(latest_release_dir)
+    public_weeks = [int(r["week"]) for r in public_rows]
+    public_hosp = [float(r["hospitalizations_per_100k"]) for r in public_rows]
+
+    fig, ax = plt.subplots(figsize=(10, 4))
+
+    # Released data
+    ax.plot(
+        public_weeks,
+        public_hosp,
+        linewidth=1.4,
+        label=f"Released data ({latest_release_dir.name})",
+    )
+
+    # One line per team (latest round file for that team in this challenge)
+    for team_dir in sorted([p for p in PREDICTIONS_ROOT.iterdir() if p.is_dir() and TEAM_RE.match(p.name)]):
+        team_challenge_dir = team_dir / challenge_dir.name
+        if not team_challenge_dir.exists():
+            continue
+
+        round_files = sorted(
+            [p for p in team_challenge_dir.glob("round-*.csv") if ROUND_RE.match(p.name)],
+            key=lambda p: int(p.stem.split("-")[1]),
+        )
+        if not round_files:
+            continue
+
+        latest_pred_file = round_files[-1]
+        rows = read_csv(latest_pred_file)
+        weeks = [int(r["week"]) for r in rows]
+        hosp = [float(r["hospitalizations_per_100k"]) for r in rows]
+
+        ax.plot(
+            weeks,
+            hosp,
+            linewidth=1.0,
+            label=f"{team_dir.name} ({latest_pred_file.stem})",
+        )
+
+    ax.set_title(f"All teams - {challenge_dir.name}")
+    ax.set_xlabel("Week")
+    ax.set_ylabel("Hosp / 100k")
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=6)
+
+    PLOTS_ROOT.mkdir(parents=True, exist_ok=True)
+    out_dir = PLOTS_ROOT / challenge_dir.name
+    out_dir.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
+    fig.savefig(out_dir / "all-teams.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
@@ -108,12 +174,10 @@ def plot_team_challenge(team_dir: Path, challenge_dir: Path) -> None:
             label=round_label,
         )
 
-    # Forecast boundary line, if available
-    forecast_end_week = release_info.get("forecast_end_week")
-    released_through_week = release_info.get("released_through_week")
-    if released_through_week is not None:
+    forecast_start_week = release_info.get("forecast_start_week")
+    if forecast_start_week is not None:
         ax.axvline(
-            int(released_through_week),
+            int(forecast_start_week),
             linestyle=":",
             linewidth=1.0,
             alpha=0.7,
