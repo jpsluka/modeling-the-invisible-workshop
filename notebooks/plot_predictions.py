@@ -1,10 +1,56 @@
 from __future__ import annotations
 
+"""
+Release-driven plotting for the workshop repository.
+
+This script preserves older plots by writing each release's figures into a
+release-specific directory.
+
+Expected repository layout:
+
+data-release/
+  challenge-01/
+    release-01/
+      release_info.json
+      public.csv
+    release-02/
+      release_info.json
+      public.csv
+      truth_previous_round.csv
+    release-03/
+      release_info.json
+      public.csv
+      truth_previous_round.csv
+
+predictions/
+  Team-01/
+    challenge-01/
+      round-01.csv
+      round-02.csv
+      round-03.csv
+  Team-02/
+    ...
+
+Output layout:
+
+scoring/plots/
+  challenge-01/
+    release-02/
+      Team-01.png
+      Team-02.png
+      all-teams.png
+    release-03/
+      Team-01.png
+      Team-02.png
+      all-teams.png
+  challenge-02/
+    ...
+"""
+
 from pathlib import Path
 import csv
 import json
 import re
-from typing import Optional
 
 import matplotlib.pyplot as plt
 
@@ -29,76 +75,107 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def latest_release_dir(challenge_name: str) -> Path:
-    challenge_release_dir = DATA_RELEASE_ROOT / challenge_name
-    if not challenge_release_dir.exists():
-        raise FileNotFoundError(f"Missing release folder for {challenge_name}: {challenge_release_dir}")
-
-    release_dirs = sorted(
-        [p for p in challenge_release_dir.iterdir() if p.is_dir() and RELEASE_RE.match(p.name)],
-        key=lambda p: int(p.name.split("-")[1]),
-    )
-    if not release_dirs:
-        raise FileNotFoundError(f"No release folders found for {challenge_name} in {challenge_release_dir}")
-
-    return release_dirs[-1]
+def release_number(release_name: str) -> int:
+    if not RELEASE_RE.match(release_name):
+        raise ValueError(f"Invalid release folder name: {release_name}")
+    return int(release_name.split("-")[1])
 
 
 def latest_public_release_dir(challenge_name: str) -> Path:
     """
     Return the newest release folder for a challenge that contains public.csv.
+    This is used only to find the public release trajectory for plots.
     """
     challenge_release_dir = DATA_RELEASE_ROOT / challenge_name
+    if not challenge_release_dir.exists():
+        raise FileNotFoundError(f"Missing challenge release folder: {challenge_release_dir}")
+
     release_dirs = sorted(
         [p for p in challenge_release_dir.iterdir() if p.is_dir() and RELEASE_RE.match(p.name)],
-        key=lambda p: int(p.name.split("-")[1]),
+        key=lambda p: release_number(p.name),
     )
+
     for release_dir in reversed(release_dirs):
         if (release_dir / "public.csv").exists():
             return release_dir
+
     raise FileNotFoundError(f"No release with public.csv found for {challenge_name}")
 
 
-def latest_round_file(challenge_dir: Path) -> Optional[Path]:
-    round_files = sorted(
-        [p for p in challenge_dir.glob("round-*.csv") if ROUND_RE.match(p.name)],
-        key=lambda p: int(p.stem.split("-")[1]),
+def scoring_release_dirs(challenge_name: str) -> list[Path]:
+    """
+    Return all release folders for a challenge that close a previous round.
+    """
+    challenge_release_dir = DATA_RELEASE_ROOT / challenge_name
+    if not challenge_release_dir.exists():
+        return []
+
+    release_dirs = sorted(
+        [p for p in challenge_release_dir.iterdir() if p.is_dir() and RELEASE_RE.match(p.name)],
+        key=lambda p: release_number(p.name),
     )
-    return round_files[-1] if round_files else None
+
+    scoring_dirs: list[Path] = []
+    for release_dir in release_dirs:
+        info_path = release_dir / "release_info.json"
+        if not info_path.exists():
+            continue
+        try:
+            info = load_json(info_path)
+        except json.JSONDecodeError:
+            continue
+        if "scores_round_id" in info:
+            scoring_dirs.append(release_dir)
+
+    return scoring_dirs
 
 
 def load_public_data(release_dir: Path) -> tuple[list[int], list[float], dict]:
+    """
+    Load public.csv and release_info.json from a release directory.
+    """
     public_path = release_dir / "public.csv"
-    if not public_path.exists():
-        raise FileNotFoundError(f"Missing public.csv: {public_path}")
-
     info_path = release_dir / "release_info.json"
-    if not info_path.exists():
-        raise FileNotFoundError(f"Missing release_info.json: {info_path}")
 
-    info = load_json(info_path)
+    if not public_path.exists():
+        raise FileNotFoundError(f"Missing public data file: {public_path}")
+    if not info_path.exists():
+        raise FileNotFoundError(f"Missing release metadata file: {info_path}")
+
     rows = read_csv(public_path)
+    info = load_json(info_path)
 
     weeks = [int(r["week"]) for r in rows]
     hosp = [float(r["hospitalizations_per_100k"]) for r in rows]
     return weeks, hosp, info
 
 
-def plot_team_challenge(team_dir: Path, challenge_dir: Path) -> None:
+def team_prediction_file(team_dir: Path, challenge_name: str, round_id: int) -> Path | None:
+    pred_path = team_dir / challenge_name / f"round-{round_id:02d}.csv"
+    return pred_path if pred_path.exists() else None
+
+
+def plot_team_for_release(team_dir: Path, challenge_name: str, release_dir: Path) -> None:
     """
-    Plot all rounds for one team within one challenge, overlayed with the
-    released public data for that challenge.
+    Create a team-specific plot for a specific scoring release.
     """
-    round_files = sorted(
-        [p for p in challenge_dir.glob("round-*.csv") if ROUND_RE.match(p.name)],
-        key=lambda p: int(p.stem.split("-")[1]),
-    )
-    if not round_files:
-        print(f"Skipping {team_dir.name}/{challenge_dir.name}: no round files found.")
+    public_weeks, public_hosp, release_info = load_public_data(release_dir)
+
+    if "scores_round_id" not in release_info:
         return
 
-    release_dir = latest_public_release_dir(challenge_dir.name)
-    public_weeks, public_hosp, release_info = load_public_data(release_dir)
+    round_id = int(release_info["scores_round_id"])
+    pred_path = team_prediction_file(team_dir, challenge_name, round_id)
+    if pred_path is None:
+        return
+
+    rows = read_csv(pred_path)
+    weeks = [int(r["week"]) for r in rows]
+    hosp = [float(r["hospitalizations_per_100k"]) for r in rows]
+
+    out_dir = PLOTS_ROOT / challenge_name / release_dir.name
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{team_dir.name}.png"
 
     fig, ax = plt.subplots(figsize=(7, 3))
 
@@ -111,19 +188,15 @@ def plot_team_challenge(team_dir: Path, challenge_dir: Path) -> None:
         label=f"Released data ({release_dir.name})",
     )
 
-    for pred_file in round_files:
-        rows = read_csv(pred_file)
-        weeks = [int(r["week"]) for r in rows]
-        hosp = [float(r["hospitalizations_per_100k"]) for r in rows]
-        ax.plot(
-            weeks,
-            hosp,
-            linewidth=1.0,
-            markersize=2,
-            marker="o",
-            linestyle="--",
-            label=pred_file.stem,
-        )
+    ax.plot(
+        weeks,
+        hosp,
+        linewidth=1.0,
+        markersize=2,
+        marker="o",
+        linestyle="--",
+        label=f"{team_dir.name} {pred_path.stem}",
+    )
 
     forecast_start_week = release_info.get("forecast_start_week")
     if forecast_start_week is not None:
@@ -135,28 +208,33 @@ def plot_team_challenge(team_dir: Path, challenge_dir: Path) -> None:
             label="Forecast start",
         )
 
-    ax.set_title(f"{team_dir.name} - {challenge_dir.name}")
+    ax.set_title(f"{team_dir.name} - {challenge_name} - {release_dir.name}")
     ax.set_xlabel("Week")
     ax.set_ylabel("Hosp / 100k")
-    ax.legend(fontsize=6)
     ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=6)
 
-    out_dir = PLOTS_ROOT / challenge_dir.name
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"{team_dir.name}.png"
     fig.tight_layout()
     fig.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"Wrote {out_path}")
 
 
-def plot_all_teams_for_challenge(challenge_name: str) -> None:
+def plot_all_teams_for_release(challenge_name: str, release_dir: Path) -> None:
     """
-    Plot the released data plus one line per team on a single figure.
-    Lines only: no markers.
+    Create an aggregate plot for a specific scoring release:
+    released data + one line per team, no markers.
     """
-    release_dir = latest_public_release_dir(challenge_name)
     public_weeks, public_hosp, release_info = load_public_data(release_dir)
+
+    if "scores_round_id" not in release_info:
+        return
+
+    round_id = int(release_info["scores_round_id"])
+
+    out_dir = PLOTS_ROOT / challenge_name / release_dir.name
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / "all-teams.png"
 
     fig, ax = plt.subplots(figsize=(10, 4))
 
@@ -168,15 +246,11 @@ def plot_all_teams_for_challenge(challenge_name: str) -> None:
     )
 
     for team_dir in sorted([p for p in PREDICTIONS_ROOT.iterdir() if p.is_dir() and TEAM_RE.match(p.name)]):
-        challenge_dir = team_dir / challenge_name
-        if not challenge_dir.exists():
+        pred_path = team_prediction_file(team_dir, challenge_name, round_id)
+        if pred_path is None:
             continue
 
-        pred_file = latest_round_file(challenge_dir)
-        if pred_file is None:
-            continue
-
-        rows = read_csv(pred_file)
+        rows = read_csv(pred_path)
         weeks = [int(r["week"]) for r in rows]
         hosp = [float(r["hospitalizations_per_100k"]) for r in rows]
 
@@ -184,7 +258,7 @@ def plot_all_teams_for_challenge(challenge_name: str) -> None:
             weeks,
             hosp,
             linewidth=1.0,
-            label=f"{team_dir.name} ({pred_file.stem})",
+            label=f"{team_dir.name} {pred_path.stem}",
         )
 
     forecast_start_week = release_info.get("forecast_start_week")
@@ -197,15 +271,12 @@ def plot_all_teams_for_challenge(challenge_name: str) -> None:
             label="Forecast start",
         )
 
-    ax.set_title(f"All teams - {challenge_name}")
+    ax.set_title(f"All teams - {challenge_name} - {release_dir.name}")
     ax.set_xlabel("Week")
     ax.set_ylabel("Hosp / 100k")
     ax.grid(True, alpha=0.3)
     ax.legend(fontsize=6)
 
-    out_dir = PLOTS_ROOT / challenge_name
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / "all-teams.png"
     fig.tight_layout()
     fig.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -232,12 +303,17 @@ def main() -> None:
         print("No team challenge folders found. Nothing to plot.")
         return
 
-    for team_dir in sorted([p for p in PREDICTIONS_ROOT.iterdir() if p.is_dir() and TEAM_RE.match(p.name)]):
-        for challenge_dir in sorted([p for p in team_dir.iterdir() if p.is_dir() and CHALLENGE_RE.match(p.name)]):
-            plot_team_challenge(team_dir, challenge_dir)
-
     for challenge_name in challenge_names:
-        plot_all_teams_for_challenge(challenge_name)
+        releases = scoring_release_dirs(challenge_name)
+        if not releases:
+            print(f"No scoring releases found for {challenge_name}; skipping.")
+            continue
+
+        for release_dir in releases:
+            for team_dir in sorted([p for p in PREDICTIONS_ROOT.iterdir() if p.is_dir() and TEAM_RE.match(p.name)]):
+                plot_team_for_release(team_dir, challenge_name, release_dir)
+
+            plot_all_teams_for_release(challenge_name, release_dir)
 
     print("Finished generating plots.")
 
