@@ -198,7 +198,7 @@ def plot_team_for_release(team_dir: Path, challenge_name: str, release_dir: Path
         label=f"{team_dir.name} {pred_path.stem}",
     )
 
-    forecast_start_week = release_info.get("forecast_start_week")
+    forecast_start_week = release_info.get("scores_round_start_week")
     if forecast_start_week is not None:
         ax.axvline(
             int(forecast_start_week),
