@@ -1,8 +1,3 @@
-Prediction validation failed:
-- /home/runner/work/modeling-the-invisible-workshop/modeling-the-invisible-workshop/predictions/Team-01/challenge-02/round-03.csv: header mismatch. Expected ['week', 'hospitalizations_per_100k', 'r0'], found ['\ufeffweek', 'hospitalizations_per_100k', 'r0']
-- /home/runner/work/modeling-the-invisible-workshop/modeling-the-invisible-workshop/predictions/Team-02/challenge-02/round-03.csv: row 2: week must be >= 1
-Error: Process completed with exit code 1.
-
 week,hospitalizations_per_100k,r0
 1,0.4,2
 2,0.4,2
