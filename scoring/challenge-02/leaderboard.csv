@@ -1,8 +1,9 @@
 team_id,challenge_id,challenge_score,rounds_scored
-Team-05,challenge-02,0.177167,1
-Team-03,challenge-02,0.283129,1
-Team-01,challenge-02,0.437021,1
-Team-02,challenge-02,0.935624,1
-Team-09,challenge-02,1.062693,1
-Team-08,challenge-02,1.090529,1
-Team-06,challenge-02,1.150735,1
+Team-05,challenge-02,0.142443,2
+Team-03,challenge-02,0.435508,2
+Team-01,challenge-02,0.733529,2
+Team-09,challenge-02,0.780083,2
+Team-02,challenge-02,1.22945,2
+Team-06,challenge-02,1.316031,2
+Team-08,challenge-02,3.381157,2
+Team-07,challenge-02,26.591049,2
