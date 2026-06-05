@@ -1,7 +1,10 @@
 {
-  "challenge_id": "challenge-02",  
+  "challenge_id": "challenge-02",       
   "release_id": 3,
   "released_through_week": 16,
   "forecast_start_week": 17,
-  "forecast_end_week": 20
+  "forecast_end_week": 20,
+  "scores_round_id": 2, 
+  "scores_round_start_week": 13,
+  "scores_round_end_week": 16
 }
