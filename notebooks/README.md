@@ -16,8 +16,13 @@ How to get them
 The ZIP should contain something like:
 
 plots-manual/
+
 └── challenge-01/
+
     └── release-03/
+    
         ├── Team-01_manual_prediction_only.png
+        
         ├── Team-02_manual_prediction_only.png
+        
         └── all-teams_manual_prediction_only.png
