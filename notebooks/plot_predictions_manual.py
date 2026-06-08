@@ -210,7 +210,7 @@ def plot_team_for_release(team_dir: Path, challenge_name: str, release_dir: Path
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{team_dir.name}{PLOT_SUFFIX}.png"
 
-    fig, ax = plt.subplots(figsize=(7, 3))
+    fig, ax = plt.subplots(figsize=(6, 4))  # 7, 3
 
     ax.plot(
         public_weeks,
@@ -270,7 +270,7 @@ def plot_all_teams_for_release(challenge_name: str, release_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"all-teams{PLOT_SUFFIX}.png"
 
-    fig, ax = plt.subplots(figsize=(10, 4))
+    fig, ax = plt.subplots(figsize=(6, 4))  # 10, 4
 
     ax.plot(
         public_weeks,
