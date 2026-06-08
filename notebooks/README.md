@@ -9,7 +9,7 @@ How to get them
 ## After the workflow completes:
 
 * Go to Actions.
-* Open the workflow run.
+* Open the workflow run. (May need to refresh the page.)
 * Scroll to Artifacts near the bottom of the page.
 * Download manual-prediction-plots.
 
