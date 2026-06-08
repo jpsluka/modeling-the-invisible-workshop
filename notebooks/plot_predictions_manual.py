@@ -275,7 +275,7 @@ def plot_all_teams_for_release(challenge_name: str, release_dir: Path) -> None:
     ax.plot(
         public_weeks,
         public_hosp,
-        linewidth=1.4,
+        linewidth=3.0,
         label=f"Released data ({release_dir.name})",
     )
 
