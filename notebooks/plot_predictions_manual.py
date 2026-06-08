@@ -240,7 +240,7 @@ def plot_team_for_release(team_dir: Path, challenge_name: str, release_dir: Path
             label="Forecast start",
         )
 
-    ax.set_title(f"{team_dir.name} - {challenge_name} - {release_dir.name}")
+    ax.set_title(f"{challenge_name} - {release_dir.name} - {team_dir.name}")
     ax.set_xlabel("Week")
     ax.set_ylabel("Hosp / 100k")
     ax.grid(True, alpha=0.3)
