@@ -8,10 +8,10 @@ How to get them
 
 ## After the workflow completes:
 
-Go to Actions.
-Open the workflow run.
-Scroll to Artifacts near the bottom of the page.
-Download manual-prediction-plots.
+* Go to Actions.
+* Open the workflow run.
+* Scroll to Artifacts near the bottom of the page.
+* Download manual-prediction-plots.
 
 The ZIP should contain something like:
 
