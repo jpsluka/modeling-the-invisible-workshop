@@ -168,7 +168,8 @@ def prediction_start_week(release_info: dict) -> int | None:
     Prefer the forecast start week when available. Fall back to the scoring
     round start week if that is the only field present.
     """
-    start_week = release_info.get("forecast_start_week")
+    #start_week = release_info.get("forecast_start_week")
+    start_week = release_info.get("scores_round_start_week")
     if start_week is None:
         start_week = release_info.get("scores_round_start_week")
     return int(start_week) if start_week is not None else None
