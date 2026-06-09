@@ -5,7 +5,7 @@ Intermediate levels of vaccination coverage may minimize seasonal influenza outb
 [https://doi.org/10.1371/journal.pone.0199674](https://doi.org/10.1371/journal.pone.0199674).
 
 The model is for two infectious agents, similar to Influenza A and Inflouenza B, with the possiblity of cross-infection and vaccinations.
-<img width="912" height="455" alt="image" src="https://github.com/user-attachments/assets/bbcfce8a-402b-4e5a-9963-34f5d41023bc" />
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/bbcfce8a-402b-4e5a-9963-34f5d41023bc" />
 
 The model was implmented in [COPASI](https://copasi.org/), which can be downloaded from [here](https://copasi.org/Download/).
 The COPASI version of the model is available in this GitHub repo as `SIRCrossover_VZs_V2.cps`. The COPASI model includes three named parameter sets:
@@ -26,21 +26,21 @@ For the `Leading_Hump` parameter set the graph should look like:
 
 <img height="300" alt="Leading_Hump parameter set the graph" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
 
-<br>
+<br><br>
 
 For the `Trailing_peak` data set, the graph should look like:
 
 <img height="300" alt="Trailing_peak parameter set the graph" src="https://github.com/user-attachments/assets/25ebb159-d14f-4701-82b0-3fa8414cb9a9" />
 
-<br>
+<br><br>
 
 For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 
-<br>
+<br><br>
 
 <img height="300" alt="Fit_to_Data_InfA_2018 parameter set the graph" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
 
-<br>
+<br><br>
 
 The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
