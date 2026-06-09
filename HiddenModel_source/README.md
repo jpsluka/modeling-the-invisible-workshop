@@ -33,14 +33,14 @@ For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 
 The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
- * You can choose the optimization method with the "Method" dropdown near the center of the page.
-  * "Particle Swarm" works well and is less likely to get trapped in a local minima.
-  * Click on the "Show Settings" checkbox and change the swarm settings to Iteration Limt: 10000, Swarm Size: 2000, and Std. Deviation: 1e-9.
+    * You can choose the optimization method with the "Method" dropdown near the center of the page.
+    * "Particle Swarm" works well and is less likely to get trapped in a local minima.
+    * Click on the "Show Settings" checkbox and change the swarm settings to Iteration Limt: 10000, Swarm Size: 2000, and Std. Deviation: 1e-9.
 * Click the "Run" button at the bottom of the page.
 * Several windows should open including "Progress of Fit" and "COPASI Progress Dialog". (These windows may be hidden behind the main COPASI window.)
- * This model has several feedback loops so it is easy for it to get trapped in a local minima.
- * You might run the swarm several times and choose the one that gives the sum of squares error.
- * For this model and data set, the error should be around 2.3.
+    * This model has several feedback loops so it is easy for it to get trapped in a local minima.
+    * You might run the swarm several times and choose the one that gives the lowest sum of squares error.
+    * For this model and data set, the error should be around 2.3.
 
 <img width="963" height="515" alt="image" src="https://github.com/user-attachments/assets/8df4d24c-fbd7-47fa-a196-e200735e06f2" />
 
