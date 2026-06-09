@@ -31,8 +31,7 @@ For the `Leading_Hump` parameter set the graph should look like:
 
 <img height="300" alt="Leading_Hump parameter set the graph" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
 
-<br>
-
+<br><br>
 For the `Trailing_peak` data set, the graph should look like:
 
 <img height="300" alt="Trailing_peak parameter set the graph" src="https://github.com/user-attachments/assets/25ebb159-d14f-4701-82b0-3fa8414cb9a9" />
