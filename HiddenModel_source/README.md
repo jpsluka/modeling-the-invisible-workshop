@@ -22,4 +22,4 @@ To run the model, navigate to `COPASI > Tasks > Time Course`, then click on the 
 The simulation should run and open several windows, including "Hospitalizations". For the "Leading_Hump" parameter set the graph should look like:
 <img width="641" height="498" alt="image" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
 
-J. SlukaM<br>9 June 2026
+J. Sluka<br>9 June 2026
