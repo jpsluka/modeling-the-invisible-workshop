@@ -22,14 +22,14 @@ The parameter set has now been loaded into the model.
 To run the model, navigate to `COPASI > Tasks > Time Course`, then click on the "Run" button at the bottom of the page. 
 The simulation should run and open several windows, including "Hospitalizations". 
 
-For the "Leading_Hump" parameter set the graph should look like:
-<img width="641" height="498" alt="image" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
+For the `Leading_Hump` parameter set the graph should look like:
+<img height="300" alt="Leading_Hump parameter set the graph" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
 
-For the ``Trailing_peak` data set, the graph should look like:
-<img width="643" height="492" alt="image" src="https://github.com/user-attachments/assets/25ebb159-d14f-4701-82b0-3fa8414cb9a9" />
+For the `Trailing_peak` data set, the graph should look like:
+<img width="643" height="492" alt="Trailing_peak parameter set the graph" src="https://github.com/user-attachments/assets/25ebb159-d14f-4701-82b0-3fa8414cb9a9" />
 
 For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
-<img width="641" height="490" alt="image" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
+<img width="641" height="490" alt="Fit_to_Data_InfA_2018 parameter set the graph" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
 
 The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
