@@ -26,13 +26,21 @@ For the `Leading_Hump` parameter set the graph should look like:
 
 <img height="300" alt="Leading_Hump parameter set the graph" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
 
+<br>
+
 For the `Trailing_peak` data set, the graph should look like:
 
 <img height="300" alt="Trailing_peak parameter set the graph" src="https://github.com/user-attachments/assets/25ebb159-d14f-4701-82b0-3fa8414cb9a9" />
 
+<br>
+
 For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 
+<br>
+
 <img height="300" alt="Fit_to_Data_InfA_2018 parameter set the graph" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
+
+<br>
 
 The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
@@ -45,7 +53,7 @@ The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate 
     * You might run the swarm several times and choose the one that gives the lowest sum of squares error.
     * For this model and data set, the error should be around 2.3.
 
-<imgheight="300" alt="image" src="https://github.com/user-attachments/assets/8df4d24c-fbd7-47fa-a196-e200735e06f2" />
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/8df4d24c-fbd7-47fa-a196-e200735e06f2" />
 
 
 J. Sluka<br>9 June 2026
