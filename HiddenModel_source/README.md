@@ -8,7 +8,12 @@ The model is for two infectious agents, similar to Influenza A and Inflouenza B,
 <img height="350" alt="image" src="https://github.com/user-attachments/assets/bbcfce8a-402b-4e5a-9963-34f5d41023bc" />
 
 The model was implmented in [COPASI](https://copasi.org/), which can be downloaded from [here](https://copasi.org/Download/).
-The COPASI version of the model is available in this GitHub repo as `SIRCrossover_VZs_V2.cps`. The COPASI model includes three named parameter sets:
+The COPASI version of the model is available in this GitHub repo as `SIRCrossover_VZs_V2.cps`. 
+Open the `SIRCrossover_VZs_V2.cps` file in COPASI.
+
+# Running the model
+
+The COPASI model includes three named parameter sets:
 
  1. `Fit_to_Data_InfA_2018`: A fit to CDC influenza data for 2018 (the data file is `influenzaA2017_2018.csv`)
  2. `Leading_Hump`: Workshop Challenge 1
@@ -36,12 +41,11 @@ For the `Trailing_peak` data set, the graph should look like:
 
 For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 
-<br><br>
-
 <img height="300" alt="Fit_to_Data_InfA_2018 parameter set the graph" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
 
 <br><br>
 
+## Fitting Data
 The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
     * You can choose the optimization method with the "Method" dropdown near the center of the page.
