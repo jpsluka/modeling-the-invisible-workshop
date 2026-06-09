@@ -10,9 +10,9 @@ The model is for two infectious agents, similar to Influenza A and Inflouenza B,
 The model was implmented in [COPASI](https://copasi.org/), which can be downloaded from [here](https://copasi.org/Download/).
 The COPASI version of the model is available in this GitHub repo. The COPASI model includes three named parameter sets:
 
- 1. **Fit_to_Data_InfA_2018**: A fit to CDC influenza data for 2018.
- 2. **Leading_Hum**p: Workshop Challenge 3
- 3. **Trailing_peak**: Workshop Challenge 2
+ 1. `Fit_to_Data_InfA_2018`: A fit to CDC influenza data for 2018.
+ 2. `Leading_Hump`: Workshop Challenge 3
+ 3. `Trailing_peak`: Workshop Challenge 2
 
 Use the navigation tree on the left of the COPASI window to navigate to `COPASI > Model > Biochemical > Parameter Sets`, then double click 
 on a parameter set name, and in the resulting window click the "Apply" button in the lower right. The parameter set has now been loaded into the
