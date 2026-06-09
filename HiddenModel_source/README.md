@@ -37,7 +37,6 @@ For the `Trailing_peak` data set, the graph should look like:
 <img height="300" alt="Trailing_peak parameter set the graph" src="https://github.com/user-attachments/assets/25ebb159-d14f-4701-82b0-3fa8414cb9a9" />
 
 <br><br>
-
 For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 
 <img height="300" alt="Fit_to_Data_InfA_2018 parameter set the graph" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
@@ -45,11 +44,14 @@ For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 <br><br>
 
 ## Fitting Data
-The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
+The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018.csv` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
     * You can choose the optimization method with the "Method" dropdown near the center of the page.
     * "Particle Swarm" works well and is less likely to get trapped in a local minima.
-    * Click on the "Show Settings" checkbox and change the swarm settings to Iteration Limt: 10000, Swarm Size: 2000, and Std. Deviation: 1e-9.
+    * Click on the "Show Settings" checkbox and change the swarm settings to:
+      * Iteration Limt: 10000
+      * Swarm Size: 2000
+      * Std. Deviation: 1e-9
 * Click the "Run" button at the bottom of the page.
 * Several windows should open including "Progress of Fit" and "COPASI Progress Dialog". (These windows may be hidden behind the main COPASI window.)
     * This model has several feedback loops so it is easy for it to get trapped in a local minima.
