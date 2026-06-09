@@ -8,7 +8,7 @@ The model is for two infectious agents, similar to Influenza A and Inflouenza B,
 <img width="912" height="455" alt="image" src="https://github.com/user-attachments/assets/bbcfce8a-402b-4e5a-9963-34f5d41023bc" />
 
 The model was implmented in [COPASI](https://copasi.org/), which can be downloaded from [here](https://copasi.org/Download/).
-The COPASI version of the model is available in this GitHub repo. The COPASI model includes three named parameter sets:
+The COPASI version of the model is available in this GitHub repo as `SIRCrossover_VZs_V2.cps`. The COPASI model includes three named parameter sets:
 
  1. `Fit_to_Data_InfA_2018`: A fit to CDC influenza data for 2018
  2. `Leading_Hump`: Workshop Challenge 3
