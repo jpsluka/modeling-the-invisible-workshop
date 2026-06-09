@@ -10,7 +10,7 @@ The model is for two infectious agents, similar to Influenza A and Inflouenza B,
 The model was implmented in [COPASI](https://copasi.org/), which can be downloaded from [here](https://copasi.org/Download/).
 The COPASI version of the model is available in this GitHub repo. The COPASI model includes three named parameter sets:
 
- 1. `Fit_to_Data_InfA_2018`: A fit to CDC influenza data for 2018.
+ 1. `Fit_to_Data_InfA_2018`: A fit to CDC influenza data for 2018
  2. `Leading_Hump`: Workshop Challenge 3
  3. `Trailing_peak`: Workshop Challenge 2
 
@@ -19,5 +19,7 @@ on a parameter set name, and in the resulting window click the "Apply" button in
 model.
 
 To run the model, navigate to `COPASI > Tasks > Time Course`, then click on the "Run" button at the bottom of the page. 
-The simulation should run and open several windows, including "Hospitalizations". Fo the "Leading_Hump" parameter set the graph should look like:
+The simulation should run and open several windows, including "Hospitalizations". For the "Leading_Hump" parameter set the graph should look like:
 <img width="641" height="498" alt="image" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
+
+J. SlukaM<br>9 June 2026
