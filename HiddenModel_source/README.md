@@ -41,9 +41,10 @@ For the `Fit_to_Data_InfA_2018` parameter set the graph should look like:
 
 <img height="300" alt="Fit_to_Data_InfA_2018 parameter set the graph" src="https://github.com/user-attachments/assets/91d23296-2b11-466e-9383-943bd44700bf" />
 
-<br><br>
+<br>
 
-## Fitting Data
+# Fitting Data
+
 The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018.csv` data. Navigate down to `COPASI > Tasks > Parameter Estimation`. 
  * The CDC data is already linked to the parameter estimation task, and you can examine that linkage by clicking the "Experimental Data" button in the upper right.
     * You can choose the optimization method with the "Method" dropdown near the center of the page.
