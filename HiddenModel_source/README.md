@@ -60,5 +60,5 @@ The COPASI file is also setup to fit the `Fit_to_Data_InfA_2018.csv` data. Navig
 
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/8df4d24c-fbd7-47fa-a196-e200735e06f2" />
 
-<br>
+<br><br>
 J. Sluka<br>9 June 2026
