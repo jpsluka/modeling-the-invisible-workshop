@@ -22,29 +22,5 @@ To run the model, navigate to `COPASI > Tasks > Time Course`, then click on the 
 The simulation should run and open several windows, including "Hospitalizations". For the "Leading_Hump" parameter set the graph should look like:
 <img width="641" height="498" alt="image" src="https://github.com/user-attachments/assets/dcf47817-19dc-49cc-b815-c05e8b82f9ea" />
 
+
 J. Sluka<br>9 June 2026
-
-
-$$
-\begin{aligned}
- \frac{\text{d}\left([\text{SI}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= + V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{SI}] \cdot \beta_2\right) \\
- &\quad + V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{RI}] \cdot \beta_2\right) \\
- &\quad - V_{\text{compartment}} \cdot \left(\gamma \cdot [\text{SI}]\right) \\
- \frac{\text{d}\left([\text{SS}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= - V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{SI}] \cdot \beta_2\right) \\
- &\quad - V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{IS}] \cdot \beta_1\right) \\
- &\quad - V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{RI}] \cdot \beta_2\right) \\
- &\quad - V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{IR}] \cdot \beta_1\right) \\
- \frac{\text{d}\left([\text{IS}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= + V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{IS}] \cdot \beta_1\right) \\
- &\quad + V_{\text{compartment}} \cdot \left([\text{SS}] \cdot [\text{IR}] \cdot \beta_1\right) \\
- &\quad - V_{\text{compartment}} \cdot \left(\gamma \cdot [\text{IS}]\right) \\
- \frac{\text{d}\left([\text{RC}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= + V_{\text{compartment}} \cdot \left(\gamma \cdot [\text{IS}]\right) \\
- &\quad - V_{\text{compartment}} \cdot \left(\sigma \cdot [\text{RC}]\right) \\
- \frac{\text{d}\left([\text{CR}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= + V_{\text{compartment}} \cdot \left(\gamma \cdot [\text{SI}]\right) \\
- &\quad - V_{\text{compartment}} \cdot \left(\sigma \cdot [\text{CR}]\right) \\
- \frac{\text{d}\left([\text{RS}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= - V_{\text{compartment}} \cdot \left([\text{RS}] \cdot [\text{SI}] \cdot \beta_2\right) \\
- &\quad + V_{\text{compartment}} \cdot \left(\sigma \cdot [\text{RC}]\right) \\
- &\quad - V_{\text{compartment}} \cdot \left([\text{RS}] \cdot [\text{RI}] \cdot \beta_2\right) \\
- \frac{\text{d}\left([\text{SR}] \cdot V_{\text{compartment}}\right)}{\text{d}t} &= - V_{\text{compartment}} \cdot \left([\text{SR}] \cdot [\text{IS}] \cdot \beta_1\right) \\
- &\quad + V_{\text{compartment}} \cdot \left(\sigma \cdot [\text{CR}]\right)
-\end{aligned}
-$$
